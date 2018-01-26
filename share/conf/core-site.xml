@@ -18,4 +18,8 @@
     <name>fs.defaultFS</name>
     <value>hdfs://cluster</value>
   </property>
+  <property>
+    <name>hadoop.http.staticuser.user</name>
+    <value>root</value>
+  </property>
 </configuration>

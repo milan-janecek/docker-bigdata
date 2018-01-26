@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
 	  vb.cpus = 10
     end
     
-    dockerhost.vm.provision :shell, path: "install_docker_ce.sh"
+    dockerhost.vm.provision :shell, path: "provision.sh"
   end
   
 end

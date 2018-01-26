@@ -39,6 +39,18 @@
     <value>nn2:19870</value>
   </property>
   <property>
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>file:///edits</value>
+  </property>
+  <property>
+    <name>dfs.client.failover.proxy.provider.cluster</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>shell(/bin/true)</value>
+  </property>
+  <property>
     <name>dfs.datanode.http.address</name>
     <value>0.0.0.0:9864</value>
   </property>
@@ -61,21 +73,5 @@
   <property>
     <name>dfs.namenode.name.dir</name>
     <value>file:///data/dfs/name</value>
-  </property>
-  <property>
-    <name>dfs.namenode.checkpoint.dir</name>
-    <value>file:///data/dfs/namesecondary </value>
-  </property>
-  <property>
-    <name>dfs.namenode.shared.edits.dir</name>
-    <value>file:///edits</value>
-  </property>
-  <property>
-    <name>dfs.client.failover.proxy.provider.mycluster</name>
-    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
-  </property>
-  <property>
-    <name>dfs.ha.fencing.methods</name>
-    <value>shell(/bin/true)</value>
   </property>
 </configuration>

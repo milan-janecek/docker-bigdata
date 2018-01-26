@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "*** DELETING CLUSTER ***"
+
+echo "DELETING CONTAINERS"
+docker container rm w3
+docker container rm w2
+docker container rm w1
+docker container rm nn2
+docker container rm nn1
+
+echo "DELETING VOLUMES"
+docker volume rm dn3-data
+docker volume rm dn2-data
+docker volume rm dn1-data
+docker volume rm nn2-data
+docker volume rm nn1-data
+docker volume rm edits
+
+echo "DELETING CLUSTER NETWORK"
+docker network rm cluster

@@ -15,10 +15,7 @@ echo "WAITING 5 SECONDS FOR NAMENODE 2 TO START"
 sleep 5
 
 echo "FAILOVER TO NAMENODE 1"
-docker run --rm \
-  --network=cluster \
-  --mount type=bind,source=/vagrant/share,target=/share \
-  hadoop /share/execute.sh hdfs haadmin -failover --forcefence --forceactive nn2 nn1
+cluster-execute hdfs haadmin -failover --forcefence --forceactive nn2 nn1
 
 echo "STARTING DATANODE 1"
 docker container start w1

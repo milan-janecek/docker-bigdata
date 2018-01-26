@@ -1,0 +1,26 @@
+#!/bin/bash
+
+scripts=$(dirname $0)/scripts
+
+echo "*** CREATING CLUSTER ***"
+
+echo "CREATING CLUSTER NETWORK"
+docker network create cluster
+
+echo "CREATING EDITS DIR FOR NAMENODES HA"
+docker volume create edits
+
+$scripts/cluster-create-namenode.sh 1
+echo "WAITING 5 SECONDS FOR NAMENODE 1 TO START"
+sleep 5
+  
+$scripts/cluster-create-namenode.sh 2
+echo "WAITING 5 SECONDS FOR NAMENODE 2 TO START"
+sleep 5
+  
+echo "FAILOVER TO NAMENODE 1"
+cluster-execute hdfs haadmin -failover --forcefence --forceactive nn2 nn1
+  
+$scripts/cluster-create-datanode.sh 1
+$scripts/cluster-create-datanode.sh 2
+$scripts/cluster-create-datanode.sh 3
