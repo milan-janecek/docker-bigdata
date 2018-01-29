@@ -6,6 +6,8 @@ echo "DELETING CONTAINERS"
 docker container rm w3
 docker container rm w2
 docker container rm w1
+docker container rm zkfc2
+docker container rm zkfc1
 docker container rm nn2
 docker container rm nn1
 docker container rm zoo3

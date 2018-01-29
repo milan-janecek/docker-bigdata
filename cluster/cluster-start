@@ -14,17 +14,20 @@ docker container start zoo3
 echo "STARTING NAMENODE 1"
 docker container start nn1
 
-echo "WAITING 5 SECONDS FOR NAMENODE 1 TO START"
-sleep 5
+echo "WAITING 10 SECONDS FOR NAMENODE 1 TO START"
+sleep 10
 
 echo "STARTING NAMENODE 2"
 docker container start nn2
 
-echo "WAITING 5 SECONDS FOR NAMENODE 2 TO START"
-sleep 5
+echo "WAITING 10 SECONDS FOR NAMENODE 2 TO START"
+sleep 10
 
-echo "FAILOVER TO NAMENODE 1"
-cluster-execute hdfs haadmin -failover --forcefence --forceactive nn2 nn1
+echo "STARTING ZKFC 1"
+docker container start zkfc1
+
+echo "STARTING ZKFC 2"
+docker container start zkfc2
 
 echo "STARTING DATANODE 1"
 docker container start w1

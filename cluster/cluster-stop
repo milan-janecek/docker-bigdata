@@ -11,6 +11,12 @@ docker container stop w2
 echo "STOPPING DATANODE 1"
 docker container stop w1
 
+echo "STOPPING ZKFC 2"
+docker container stop zkfc2
+
+echo "STOPPING ZKFC 1"
+docker container stop zkfc1
+
 echo "STOPPING NAMENODE 2"
 docker container stop nn2
 
