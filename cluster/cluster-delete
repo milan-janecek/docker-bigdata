@@ -8,6 +8,9 @@ docker container rm w2
 docker container rm w1
 docker container rm nn2
 docker container rm nn1
+docker container rm zoo3
+docker container rm zoo2
+docker container rm zoo1
 
 echo "DELETING VOLUMES"
 docker volume rm dn3-data
@@ -16,6 +19,9 @@ docker volume rm dn1-data
 docker volume rm nn2-data
 docker volume rm nn1-data
 docker volume rm edits
+docker volume rm zoo3-data
+docker volume rm zoo2-data
+docker volume rm zoo1-data
 
 echo "DELETING CLUSTER NETWORK"
 docker network rm cluster

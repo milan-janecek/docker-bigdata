@@ -2,6 +2,15 @@
 
 echo "*** STARTING CLUSTER ***"
 
+echo "STARTING ZOOKEEPER 1"
+docker container start zoo1
+
+echo "STARTING ZOOKEEPER 2"
+docker container start zoo2
+
+echo "STARTING ZOOKEEPER 3"
+docker container start zoo3
+
 echo "STARTING NAMENODE 1"
 docker container start nn1
 

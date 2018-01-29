@@ -16,3 +16,12 @@ docker container stop nn2
 
 echo "STOPPING NAMENODE 1"
 docker container stop nn1
+
+echo "STOPPING ZOOKEEPER 3"
+docker container stop zoo3
+
+echo "STOPPING ZOOKEEPER 2"
+docker container stop zoo2
+
+echo "STOPPING ZOOKEEPER 1"
+docker container stop zoo1

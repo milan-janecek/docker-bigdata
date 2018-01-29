@@ -74,4 +74,12 @@
     <name>dfs.namenode.name.dir</name>
     <value>file:///data/dfs/name</value>
   </property>
+  <property>
+   <name>dfs.ha.automatic-failover.enabled</name>
+   <value>true</value>
+  </property>
+  <property>
+    <name>ha.zookeeper.quorum</name>
+    <value>zoo1:2181,zoo2:12181,zoo3:22181</value>
+  </property>
 </configuration>

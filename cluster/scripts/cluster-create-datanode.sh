@@ -33,5 +33,5 @@ docker run -dit \
   --expose ${prefix}9866 -p ${prefix}9866:${prefix}9866 \
   --expose ${prefix}9867 -p ${prefix}9867:${prefix}9867 \
   --mount source=dn${number}-data,target=/data \
-  --mount type=bind,source=/vagrant/share,target=/share \
+  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
   hadoop /share/start-datanode.sh

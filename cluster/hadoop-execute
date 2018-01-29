@@ -2,5 +2,5 @@
 
 docker run --rm \
   --network=cluster \
-  --mount type=bind,source=/vagrant/share,target=/share \
+  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
   hadoop /share/execute.sh $@

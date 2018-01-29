@@ -32,5 +32,5 @@ docker run -dit \
   --expose ${prefix}9870 -p ${prefix}9870:${prefix}9870 \
   --mount source=nn${number}-data,target=/data \
   --mount source=edits,target=/edits \
-  --mount type=bind,source=/vagrant/share,target=/share \
+  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
   hadoop /share/start-namenode.sh

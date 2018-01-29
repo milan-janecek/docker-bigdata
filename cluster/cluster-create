@@ -7,6 +7,10 @@ echo "*** CREATING CLUSTER ***"
 echo "CREATING CLUSTER NETWORK"
 docker network create cluster
 
+$scripts/cluster-create-zookeeper.sh 1
+$scripts/cluster-create-zookeeper.sh 2
+$scripts/cluster-create-zookeeper.sh 3
+
 echo "CREATING EDITS DIR FOR NAMENODES HA"
 docker volume create edits
 
@@ -18,9 +22,9 @@ $scripts/cluster-create-namenode.sh 2
 echo "WAITING 5 SECONDS FOR NAMENODE 2 TO START"
 sleep 5
   
-echo "FAILOVER TO NAMENODE 1"
-cluster-execute hdfs haadmin -failover --forcefence --forceactive nn2 nn1
+#$scripts/cluster-create-zkfc.sh 1
+#$scripts/cluster-create-zkfc.sh 2
   
-$scripts/cluster-create-datanode.sh 1
-$scripts/cluster-create-datanode.sh 2
-$scripts/cluster-create-datanode.sh 3
+#$scripts/cluster-create-datanode.sh 1
+#$scripts/cluster-create-datanode.sh 2
+#$scripts/cluster-create-datanode.sh 3
