@@ -15,6 +15,7 @@ elif [ ! -f /edits/.already_bootstrapped ]; then
   echo "BOOTSTRAPING STANDBY NAMENODE"  
   hdfs namenode -bootstrapStandby -force
  
+  echo "FORMATTING ZOOKEEPER NAMENODE HA"
   hdfs zkfc -formatZK
  
   touch /edits/.already_bootstrapped

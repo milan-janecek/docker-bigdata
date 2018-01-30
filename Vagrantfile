@@ -12,13 +12,12 @@ Vagrant.configure("2") do |config|
     dockerhost.vm.network :private_network, ip: '192.168.42.43'
     dockerhost.vm.synced_folder ".", "/vagrant"
 
-    # 3 workers
-    # 2 name nodes
-    # 1 resource manager
-    # 1 web application proxy
-    # 1 mapreduce job history server
+    # 2 namenodes
+    # 3 datanodes
+	# 2 resourcemanagers
+    # 3 nodemanagers (running on datanodes)
     # 3 zookeepers
-    dockerhost.hostmanager.aliases = %w(w1 w2 w3 nn1 nn2 rm wap mrjhs zoo1 zoo2 zoo3)
+    dockerhost.hostmanager.aliases = %w(nn1 nn2 dn1 dn2 dn3 rm1 rm2 zoo1 zoo2 zoo3)
      
     dockerhost.vm.provider "virtualbox" do |vb|
       vb.memory = 20480

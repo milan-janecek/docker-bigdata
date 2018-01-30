@@ -3,9 +3,14 @@
 echo "*** DELETING CLUSTER ***"
 
 echo "DELETING CONTAINERS"
-docker container rm w3
-docker container rm w2
-docker container rm w1
+docker container rm nm3
+docker container rm nm2
+docker container rm nm1
+docker container rm rm2
+docker container rm rm1
+docker container rm dn3
+docker container rm dn2
+docker container rm dn1
 docker container rm zkfc2
 docker container rm zkfc1
 docker container rm nn2
@@ -15,6 +20,11 @@ docker container rm zoo2
 docker container rm zoo1
 
 echo "DELETING VOLUMES"
+docker volume rm nm3-data
+docker volume rm nm2-data
+docker volume rm nm1-data
+docker volume rm rm2-data
+docker volume rm rm1-data
 docker volume rm dn3-data
 docker volume rm dn2-data
 docker volume rm dn1-data

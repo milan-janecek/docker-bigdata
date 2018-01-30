@@ -15,11 +15,11 @@ echo "CREATING EDITS DIR FOR NAMENODES HA"
 docker volume create edits
 
 $scripts/cluster-create-namenode.sh 1
-echo "WAITING 10 SECONDS FOR NAMENODE 1 TO START"
+echo "WAITING 10 SECONDS FOR NAMENODE 1 TO BOOT UP"
 sleep 10
   
 $scripts/cluster-create-namenode.sh 2
-echo "WAITING 10 SECONDS FOR NAMENODE 2 TO START"
+echo "WAITING 10 SECONDS FOR NAMENODE 2 TO BOOT UP"
 sleep 10
   
 $scripts/cluster-create-zkfc.sh 1
@@ -28,3 +28,10 @@ $scripts/cluster-create-zkfc.sh 2
 $scripts/cluster-create-datanode.sh 1
 $scripts/cluster-create-datanode.sh 2
 $scripts/cluster-create-datanode.sh 3
+
+$scripts/cluster-create-resourcemanager.sh 1
+$scripts/cluster-create-resourcemanager.sh 2
+
+$scripts/cluster-create-nodemanager.sh 1
+$scripts/cluster-create-nodemanager.sh 2
+$scripts/cluster-create-nodemanager.sh 3
