@@ -3,6 +3,8 @@
 echo "*** DELETING CLUSTER ***"
 
 echo "DELETING CONTAINERS"
+docker container rm mapredh
+docker container rm ts
 docker container rm nm3
 docker container rm nm2
 docker container rm nm1

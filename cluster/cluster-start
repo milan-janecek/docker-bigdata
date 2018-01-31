@@ -46,3 +46,9 @@ docker container start nm2
 
 echo "STARTING NODEMANAGER 3"
 docker container start nm3
+
+echo "STARTING TIMELINESERVER"
+docker container start ts
+
+echo "STARTING MAPREDHISTORYSERVER"
+docker container start mapredh

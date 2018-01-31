@@ -24,8 +24,3 @@ sudo apt-get install -y docker-ce
 sudo usermod -aG docker vagrant
 
 sudo systemctl enable docker
-
-sudo sh -c \
-  'echo export PATH=\$PATH:/vagrant/cluster >> /etc/profile.d/vagrant.sh'
-  
-docker build -t hadoop /vagrant/images/hadoop

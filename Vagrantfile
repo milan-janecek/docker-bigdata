@@ -14,17 +14,37 @@ Vagrant.configure("2") do |config|
 
     # 2 namenodes
     # 3 datanodes
-	# 2 resourcemanagers
+    # 2 resourcemanagers
     # 3 nodemanagers (running on datanodes)
     # 3 zookeepers
-    dockerhost.hostmanager.aliases = %w(nn1 nn2 dn1 dn2 dn3 rm1 rm2 zoo1 zoo2 zoo3)
+    # 1 timelineserver
+    # 1 mapredhistoryserver
+    dockerhost.hostmanager.aliases = %w(nn1 nn2 dn1 dn2 dn3 rm1 rm2 zoo1 zoo2 zoo3 ts mapredh)
      
     dockerhost.vm.provider "virtualbox" do |vb|
       vb.memory = 20480
       vb.cpus = 10
     end
     
-    dockerhost.vm.provision :shell, path: "provision.sh"
+    #dockerhost.vm.provision :shell, path: "provision/install-docker.sh"
+
+    dockerhost.vm.provision "shell" do |s|
+      s.path = "provision/install-java.sh"
+      s.args = [ "8" ]                                  # version of openjdk 
+    end	
+    
+    dockerhost.vm.provision "shell" do |s|
+      s.path = "provision/install-hadoop.sh"
+      s.args = [ 
+        "http://mirror.dkm.cz/apache/hadoop/common",    # mirror
+        "3.0.0",                                        # hadoop version
+        "2d974865fb2156f67d115ad6dccd5884e1755c6e"      # file checksum
+      ]
+    end
+    
+    #dockerhost.vm.provision :shell, path: "provision/install-zookeeper.sh"
+    #dockerhost.vm.provision :shell, path: "provision/build-images.sh"
+    #dockerhost.vm.provision :shell, path: "provision/post-install.sh"
   end
   
 end

@@ -122,6 +122,23 @@
   </property>
   <property>
     <name>yarn.log.server.url</name>
-    <value>http://mrjhs:19888/jobhistory/logs</value>
+    <value>http://mapredh:19888/jobhistory/logs</value>
+  </property>
+  <!-- ********************** timelineserver setup ********************** -->
+  <property>
+    <name>yarn.timeline-service.hostname</name>
+    <value>ts</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.system-metrics-publisher.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.timeline-service.generic-application-history.enabled</name>
+    <value>true</value>
   </property>
 </configuration>

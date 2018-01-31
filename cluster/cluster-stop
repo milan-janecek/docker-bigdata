@@ -2,6 +2,12 @@
 
 echo "*** STOPPING CLUSTER ***"
 
+echo "STOPPING MAPREDHISTORYSERVER"
+docker container kill mapredh
+
+echo "STOPPING TIMELINESERVER"
+docker container kill ts
+
 echo "STOPPING NODEMANAGER 3"
 docker container kill nm3
 
