@@ -1,5 +1,0 @@
-#!/bin/bash
-
-docker run -it --rm \
-  --network=cluster \
-  zookeeper zkCli.sh -server zoo1:2181

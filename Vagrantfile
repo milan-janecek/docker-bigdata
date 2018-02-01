@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 10
     end
     
-    #dockerhost.vm.provision :shell, path: "provision/install-docker.sh"
+    dockerhost.vm.provision :shell, path: "provision/install-docker.sh"
 
     dockerhost.vm.provision "shell" do |s|
       s.path = "provision/install-java.sh"
@@ -42,9 +42,18 @@ Vagrant.configure("2") do |config|
       ]
     end
     
-    #dockerhost.vm.provision :shell, path: "provision/install-zookeeper.sh"
-    #dockerhost.vm.provision :shell, path: "provision/build-images.sh"
-    #dockerhost.vm.provision :shell, path: "provision/post-install.sh"
+    dockerhost.vm.provision "shell" do |s|
+      s.path = "provision/install-zookeeper.sh"
+      s.args = [
+        "http://mirror.dkm.cz/apache/zookeeper",        # mirror
+        "3.4.11",                                       # hadoop version
+        "9268b4aed71dccad3d7da5bfa5573b66d2c9b565"      # file checksum
+      ]
+    end
+    
+    dockerhost.vm.provision :shell, path: "provision/build-images.sh"
+    
+    dockerhost.vm.provision :shell, path: "provision/post-install.sh"
   end
   
 end
