@@ -1,6 +1,8 @@
 #!/bin/bash
 
-sudo sh -c \
-  'echo export PATH=\$PATH:/vagrant/cluster >> /etc/profile.d/vagrant.sh'
+BASE_DIR=${BASE_DIR:-$(pwd)/..}
 
-/vagrant/cluster/cluster-create
+sudo sh -c \
+  'echo export PATH=\$PATH:'$BASE_DIR'/cluster > /etc/profile.d/cluster.sh'
+
+$BASE_DIR/cluster/cluster-create

@@ -1,12 +1,13 @@
-ARG JAVA_TAG=8 
+FROM anapsix/alpine-java:8u162b12_jdk
 
-FROM anapsix/alpine-java:${JAVA_TAG}_jdk
+# version of hadoop to use - archive must be already downloaded
+ARG VER
 
 # add hadoop archive to the image
-COPY hadoop.tar.gz /
+COPY hadoop-$VER.tar.gz /
 
 # install hadoop to /usr/local/hadoop and remove archive afterwards
-RUN tar -zxf hadoop.tar.gz -C /usr/local \
+RUN tar -zxf hadoop-$VER.tar.gz -C /usr/local \
  && mv /usr/local/hadoop-* /usr/local/hadoop \
  && rm -rf hadoop.tar.gz
  

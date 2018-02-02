@@ -24,6 +24,8 @@ fi
 #
 # 1st node gets default ports, 2nd node gets ports prefixed by 1 and so on
 
+base_dir=$(dirname $0)/../..
+
 docker run -dit \
   --name nn${number} \
   --hostname nn${number} \
@@ -32,5 +34,5 @@ docker run -dit \
   --expose ${prefix}9870 -p ${prefix}9870:${prefix}9870 \
   --mount source=nn${number}-data,target=/data \
   --mount source=edits,target=/edits \
-  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
-  hadoop /share/start-namenode.sh
+  --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+  hadoop:$HADOOP_VER /share/start-namenode.sh

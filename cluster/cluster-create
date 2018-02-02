@@ -30,8 +30,8 @@ $scripts/cluster-create-datanode.sh 2
 $scripts/cluster-create-datanode.sh 3
 
 echo "CREATING /tmp/logs ON HDFS TO STORE AGGREGATED LOGS"
-hadoop-execute hdfs dfs -mkdir /tmp
-hadoop-execute hdfs dfs -mkdir /tmp/logs
+hadoop fs -mkdir /tmp
+hadoop fs -mkdir /tmp/logs
 
 $scripts/cluster-create-resourcemanager.sh 1
 $scripts/cluster-create-resourcemanager.sh 2

@@ -27,6 +27,8 @@ fi
 #
 # 1st node gets default ports, 2nd node gets ports prefixed by 1 and so on
 
+base_dir=$(dirname $0)/../..
+
 docker run -dit \
   --name rm${number} \
   --hostname rm${number} \
@@ -37,5 +39,5 @@ docker run -dit \
   --expose ${prefix}8032 -p ${prefix}8032:${prefix}8032 \
   --expose ${prefix}8033 -p ${prefix}8033:${prefix}8033 \
   --mount source=rm${number}-data,target=/data \
-  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
-  hadoop /share/start-resourcemanager.sh
+  --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+  hadoop:$HADOOP_VER /share/start-resourcemanager.sh

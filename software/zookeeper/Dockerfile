@@ -1,13 +1,13 @@
-# specify version of java to use - check tags defined in anapsix/alpine-java repository
-ARG JAVA_TAG=8
+FROM anapsix/alpine-java:8u162b12_jdk
 
-FROM anapsix/alpine-java:${JAVA_TAG}_jdk
+# version of zookeeper to use - archive must be already downloaded
+ARG VER
 
 # add zookeeper archive to the image
-COPY zookeeper.tar.gz /
+COPY zookeeper-$VER.tar.gz /
 
 # install zookeeper to /usr/local/zookeeper and remove archive afterwards
-RUN tar -zxf zookeeper.tar.gz -C /usr/local \
+RUN tar -zxf zookeeper-$VER.tar.gz -C /usr/local \
  && mv /usr/local/zookeeper-* /usr/local/zookeeper \
  && rm -rf zookeeper.tar.gz
 

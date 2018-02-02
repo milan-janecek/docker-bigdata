@@ -10,8 +10,10 @@ number=$1
 
 echo "STARTING ZKFC $number"
 
+base_dir=$(dirname $0)/../..
+
 docker run -dit \
   --name zkfc${number} \
   --network=container:nn${number} \
-  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
-  hadoop /share/start-zkfc.sh
+  --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+  hadoop:$HADOOP_VER /share/start-zkfc.sh

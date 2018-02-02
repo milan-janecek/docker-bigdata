@@ -35,6 +35,8 @@ fi
 #
 # 1st node gets default ports, 2nd node gets ports prefixed by 1 and so on
 
+base_dir=$(dirname $0)/../..
+
 docker run -dit \
   --name dn${number} \
   --hostname dn${number} \
@@ -46,5 +48,5 @@ docker run -dit \
   --expose ${prefix}8040 -p ${prefix}8040:${prefix}8040 \
   --expose ${prefix}8048 -p ${prefix}8048:${prefix}8048 \
   --mount source=dn${number}-data,target=/data \
-  --mount type=bind,source=/vagrant/hadoop/share,target=/share \
-  hadoop /share/start-datanode.sh
+  --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+  hadoop:$HADOOP_VER /share/start-datanode.sh
