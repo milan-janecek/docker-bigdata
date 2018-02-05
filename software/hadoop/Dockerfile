@@ -9,7 +9,7 @@ COPY hadoop-$VER.tar.gz /
 # install hadoop to /usr/local/hadoop and remove archive afterwards
 RUN tar -zxf hadoop-$VER.tar.gz -C /usr/local \
  && mv /usr/local/hadoop-* /usr/local/hadoop \
- && rm -rf hadoop.tar.gz
+ && rm -rf hadoop-$VER.tar.gz
  
 # configure mapping of root and vagrant to HDFS supergroup 
 RUN addgroup supergroup \

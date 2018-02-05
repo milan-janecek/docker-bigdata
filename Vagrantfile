@@ -11,13 +11,17 @@ ORACLE_JDK_SHA256_CHECKSUM=getConfig('ORACLE_JDK_SHA256_CHECKSUM', '68ec82d47fd9
 
 APACHE_MIRROR = getConfig('APACHE_MIRROR', 'http://mirror.hosting90.cz/apache')
 
-HADOOP_VER = getConfig('HADOOP_VER', '3.0.0')
+HADOOP_VER = getConfig('HADOOP_VER', '2.7.5')
 
-HADOOP_SHA1_CHECKSUM = getConfig('HADOOP_SHA1_CHECKSUM', '2d974865fb2156f67d115ad6dccd5884e1755c6e')
+HADOOP_SHA1_CHECKSUM = getConfig('HADOOP_SHA1_CHECKSUM', '0f90ef671530c2aa42cde6da111e8e47e9cd659e')
 
 ZOOKEEPER_VER = getConfig('ZOOKEEPER_VER', '3.4.11')
 
 ZOOKEEPER_SHA1_CHECKSUM = getConfig('ZOOKEEPER_SHA1_CHECKSUM', '9268b4aed71dccad3d7da5bfa5573b66d2c9b565')
+
+HBASE_VER = getConfig('HBASE_VER', '1.2.6')
+
+HBASE_SHA1_CHECKSUM = getConfig('HBASE_SHA1_CHECKSUM', '19fe7bc1443d54bbf1fa405dfde62e37b3ea6cf6')
 
 SYNCED_FOLDER = getConfig('SYNCED_FOLDER', '/vagrant')
   
@@ -50,7 +54,8 @@ Vagrant.configure("2") do |config|
       vb.memory = 20480
       vb.cpus = 10
     end
-    
+
+=begin    
     dockerhost.vm.provision :shell, path: 'provision/install-docker.sh'
 
     dockerhost.vm.provision 'shell' do |s|
@@ -81,7 +86,20 @@ Vagrant.configure("2") do |config|
       ]
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-  
+=end    
+    
+    dockerhost.vm.provision 'shell' do |s|
+      s.path = 'provision/install-hbase.sh'
+      s.args = [
+        "#{APACHE_MIRROR}/hbase",
+        "#{HBASE_VER}",
+        "#{HBASE_SHA1_CHECKSUM}",
+        "#{HADOOP_VER}"
+      ]
+      s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
+    end
+
+=begin    
     dockerhost.vm.provision 'shell' do |s|
       s.path = 'provision/build-images.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
@@ -91,6 +109,7 @@ Vagrant.configure("2") do |config|
       s.path = 'provision/post-install.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
+=end
     
   end
   
