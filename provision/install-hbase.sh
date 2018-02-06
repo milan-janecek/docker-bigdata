@@ -41,9 +41,19 @@ if [ ! -d /usr/local/hbase-$ver ]; then
   echo "EXTRACTING HBASE ARCHIVE"
   sudo tar -zxf $BASE_DIR/software/hbase/hbase-$ver-bin.tar.gz -C /usr/local
   
-  $BASE_DIR/provision/hbase-replace-hadoop-jars.sh \
-    /usr/local/hbase-$ver \
-    /usr/local/hadoop-$hadoop_ver
+  echo "*** REPLACING HADOOP JARS AND PREPARING DOCKER BUILD PROCESS ***"
+  hbase_home=/usr/local/hbase-$ver
+  hadoop_home=/usr/local/hadoop-$hadoop_ver
+  hadoop_jars=$BASE_DIR/software/hbase/hadoop-jars/$hadoop_ver
+  mkdir -p $hadoop_jars
+  find $hbase_home -name "hadoop-*.jar" | while read hbase_file; do
+    filepattern=$(echo $(basename $hbase_file) | sed 's/[0-9].[0-9].[0-9]/[0-9].[0-9].[0-9]/')
+    find $hadoop_home -regex "$hadoop_home/.*$filepattern" | while read hadoop_file; do
+      sudo rm -rf $hbase_file
+      sudo cp -v $hadoop_file $(dirname $hbase_file)
+      sudo cp -v $hadoop_file $hadoop_jars
+    done
+  done
           
   echo "HBASE $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else
@@ -51,3 +61,10 @@ else
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE HBASE $ver ***"
+echo "ADDING HBASE BIN TO PATH"
+sudo sh -c \
+  'echo export PATH=\$PATH:/usr/local/hbase-'$ver'/bin > /etc/profile.d/hbase-bin.sh'
+  
+echo "SETTING HBASE_VER"
+sudo sh -c \
+  "echo export HBASE_VER=$ver > /etc/profile.d/hbase-ver.sh"

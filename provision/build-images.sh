@@ -9,6 +9,8 @@ docker build --build-arg VER=$HADOOP_VER \
 docker build --build-arg VER=$ZOOKEEPER_VER \
  -t zookeeper:$ZOOKEEPER_VER \
  $BASE_DIR/software/zookeeper
- 
-# TODO: builds hbase 
-# docker build --build-arg VER=1.2.6 --build-arg HADOOP_VER=2.7.5 -t hbase:1.2.6 -f /vagrant/software/hbase/Dockerfile /vagrant
+ dock
+docker build --build-arg VER=$HBASE_VER \
+ --build-arg HADOOP_VER=$HADOOP_VER \
+ -t hbase:${HBASE_VER}_${HADOOP_VER} \
+ $BASE_DIR/software/hbase

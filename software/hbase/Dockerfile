@@ -3,24 +3,18 @@ FROM anapsix/alpine-java:8u162b12_jdk
 # version of hbase to use - archive must be already downloaded
 ARG VER
 
-# version of hadoop to use - archive must be already downloaded
+# version of hadoop to use - hadoop jars must exist
 ARG HADOOP_VER
 
-# add hbase archive to the image
-COPY ./software/hbase/hbase-$VER-bin.tar.gz /
+ADD hbase-$VER-bin.tar.gz /usr/local
 
-# add hadoop archive to the image
-COPY ./software/hadoop/hadoop-$HADOOP_VER.tar.gz /
+COPY replace-hadoop-jars.sh /
 
-# add helper script to replace hadoop jars
-COPY ./provision/hbase-replace-hadoop-jars.sh /
+COPY ./hadoop-jars/$HADOOP_VER /tmp/hadoop-jars
 
-RUN tar -zxf hadoop-$HADOOP_VER.tar.gz -C /usr/local \
- && mv /usr/local/hadoop-* /usr/local/hadoop \
- && rm -rf hadoop-$HADOOP_VER.tar.gz \
- && tar -zxf hbase-$VER-bin.tar.gz -C /usr/local \
- && mv /usr/local/hbase-* /usr/local/hbase \
- && rm -rf hbase-$VER-bin.tar.gz \
- && sh hbase-replace-hadoop-jars.sh /usr/local/hbase /usr/local/hadoop \
- && rm -rf hbase-replace-hadoop-jars.sh \
- && rm -rf /usr/local/hadoop
+# replace hadoop jars
+RUN sh replace-hadoop-jars.sh \
+  && rm -rf replace-hadoop-jars.sh \
+  && rm -rf /tmp/hadoop-jars
+
+ENV HBASE_HOME="/usr/local/hbase-$VER" PATH="${PATH}:/usr/local/hbase-$VER/bin"
