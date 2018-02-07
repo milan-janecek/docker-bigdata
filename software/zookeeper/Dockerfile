@@ -5,4 +5,4 @@ ARG VER
 
 ADD zookeeper-$VER.tar.gz /usr/local
 
-ENV PATH="${PATH}:/usr/local/zookeeper-$VER/bin"
+ENV ZOOKEEPER_HOME="/usr/local/zookeeper-$VER" PATH="${PATH}:/usr/local/zookeeper-$VER/bin"

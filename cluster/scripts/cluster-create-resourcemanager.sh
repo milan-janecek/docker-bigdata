@@ -31,7 +31,7 @@ base_dir=$(dirname $0)/../..
 
 docker run -dit \
   --name rm${number} \
-  --hostname rm${number} \
+  --hostname rm${number}.cluster \
   --network=cluster \
   --expose ${prefix}8088 -p ${prefix}8088:${prefix}8088 \
   --expose ${prefix}8030 -p ${prefix}8030:${prefix}8030 \

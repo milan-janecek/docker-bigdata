@@ -47,15 +47,29 @@ Vagrant.configure("2") do |config|
     # 3 zookeepers
     # 1 timelineserver
     # 1 mapredhistoryserver
-    dockerhost.hostmanager.aliases = 
-      %w(nn1 nn2 dn1 dn2 dn3 rm1 rm2 zoo1 zoo2 zoo3 ts mapredh)
+    # 2 hmasters
+    dockerhost.hostmanager.aliases = %w(
+      nn1.cluster
+      nn2.cluster
+      dn1.cluster 
+      dn2.cluster
+      dn3.cluster
+      rm1.cluster
+      rm2.cluster
+      zoo1.cluster
+      zoo2.cluster
+      zoo3.cluster
+      ts.cluster
+      mapredh.cluster
+      hm1.cluster
+      hm2.cluster
+    )
      
     dockerhost.vm.provider 'virtualbox' do |vb|
       vb.memory = 20480
       vb.cpus = 10
     end
 
-=begin    
     dockerhost.vm.provision :shell, path: 'provision/install-docker.sh'
 
     dockerhost.vm.provision 'shell' do |s|
@@ -85,8 +99,7 @@ Vagrant.configure("2") do |config|
         "#{ZOOKEEPER_SHA1_CHECKSUM}"
       ]
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
-    end
-=end    
+    end 
     
     dockerhost.vm.provision 'shell' do |s|
       s.path = 'provision/install-hbase.sh'
@@ -98,8 +111,7 @@ Vagrant.configure("2") do |config|
       ]
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-
-=begin    
+   
     dockerhost.vm.provision 'shell' do |s|
       s.path = 'provision/build-images.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
@@ -109,7 +121,6 @@ Vagrant.configure("2") do |config|
       s.path = 'provision/post-install.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-=end
     
   end
   

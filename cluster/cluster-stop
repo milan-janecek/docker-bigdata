@@ -2,6 +2,21 @@
 
 echo "*** STOPPING CLUSTER ***"
 
+echo "STOPPING HREGIONSERVER 3"
+docker container kill hrs3
+
+echo "STOPPING HREGIONSERVER 2"
+docker container kill hrs2
+
+echo "STOPPING HREGIONSERVER 1"
+docker container kill hrs1
+
+echo "STOPPING HMASTER 2"
+docker container kill hm2
+
+echo "STOPPING HMASTER 1"
+docker container kill hm1
+
 echo "STOPPING MAPREDHISTORYSERVER"
 docker container kill mapredh
 

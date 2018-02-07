@@ -1,8 +1,21 @@
 #!/bin/bash
 
-echo "COPYING CONFIGURATION FILES FROM SHARE TO CONF DIR"
+echo "COPYING CONFIGURATION FILES FROM dockeSHARE TO CONF DIR"
 cp -v /share/conf/* $HBASE_HOME/conf
 cp -v /hadoop-share/conf/core-site.xml $HBASE_HOME/conf
 cp -v /hadoop-share/conf/hdfs-site.xml $HBASE_HOME/conf
 
-hbase master
+export HBASE_ZNODE_FILE=/data/znodefile
+
+port_inc=$(hostname | tr -dc '0-9')
+let "port_inc -= 1"
+
+echo "MODIFYING HMASTER PORTS"
+hmaster_port=16000
+let "hmaster_port += $port_inc"
+hmaster_webui_port=16010
+let "hmaster_webui_port += $port_inc"
+sed -i "s/16000/${hmaster_port}/" $HBASE_HOME/conf/hbase-site.xml
+sed -i "s/16010/${hmaster_webui_port}/" $HBASE_HOME/conf/hbase-site.xml
+
+hbase master start

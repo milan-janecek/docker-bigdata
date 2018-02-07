@@ -43,3 +43,11 @@ $scripts/cluster-create-nodemanager.sh 3
 $scripts/cluster-create-timelineserver.sh
 
 $scripts/cluster-create-mapredhistoryserver.sh
+
+$scripts/cluster-create-hmaster.sh 1
+
+$scripts/cluster-create-hmaster.sh 2
+
+$scripts/cluster-create-hregionserver.sh 1
+$scripts/cluster-create-hregionserver.sh 2
+$scripts/cluster-create-hregionserver.sh 3

@@ -29,7 +29,7 @@ base_dir=$(dirname $0)/../..
 
 docker run -dit \
   --name zoo${number} \
-  --hostname zoo${number} \
+  --hostname zoo${number}.cluster \
   --network=cluster \
   --expose ${prefix}2181 -p ${prefix}2181:${prefix}2181 \
   --expose ${prefix}2888 -p ${prefix}2888:${prefix}2888 \

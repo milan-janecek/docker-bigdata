@@ -44,16 +44,31 @@ if [ ! -d /usr/local/hbase-$ver ]; then
   echo "*** REPLACING HADOOP JARS AND PREPARING DOCKER BUILD PROCESS ***"
   hbase_home=/usr/local/hbase-$ver
   hadoop_home=/usr/local/hadoop-$hadoop_ver
-  hadoop_jars=$BASE_DIR/software/hbase/hadoop-jars/$hadoop_ver
-  mkdir -p $hadoop_jars
+  hadoop2hbase=$BASE_DIR/software/hbase/hadoop/$hadoop_ver
+  mkdir -p $hadoop2hbase/jars
   find $hbase_home -name "hadoop-*.jar" | while read hbase_file; do
     filepattern=$(echo $(basename $hbase_file) | sed 's/[0-9].[0-9].[0-9]/[0-9].[0-9].[0-9]/')
     find $hadoop_home -regex "$hadoop_home/.*$filepattern" | while read hadoop_file; do
       sudo rm -rf $hbase_file
       sudo cp -v $hadoop_file $(dirname $hbase_file)
-      sudo cp -v $hadoop_file $hadoop_jars
+      sudo cp -v $hadoop_file $hadoop2hbase/jars
     done
   done
+  mkdir -p $hadoop2hbase/native
+  cp -v $hadoop_home/lib/native/* $hadoop2hbase/native
+  
+  echo "COPYING HDFS-SITE.XML TO HBASE CONF DIR"
+  sudo cp -v $hadoop_home/etc/hadoop/core-site.xml $hbase_home/conf
+  sudo cp -v $hadoop_home/etc/hadoop/hdfs-site.xml $hbase_home/conf
+  
+  echo "COPYING HBASE CONFIGURATION FILES FROM SHARE TO HBASE CONF DIR"
+  sudo cp -v $BASE_DIR/software/hbase/share/conf/* $hbase_home/conf
+  
+  echo "MODIFYING HBASE CONFIGURATION FILES"
+  sudo sed -i "s#/data#/tmp#" \
+    $hbase_home/conf/hbase-site.xml
+  sudo sed -i -r "s/([a-zA-Z0-9.]{1,})(:[0-9]{1,})/localhost\2/g" \
+    $hbase_home/conf/hbase-site.xml
           
   echo "HBASE $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

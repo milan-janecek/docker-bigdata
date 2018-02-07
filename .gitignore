@@ -2,4 +2,4 @@
 /.vagrant
 /examples
 *.tar.gz
-/software/hbase/hadoop-jars
+/software/hbase/hadoop

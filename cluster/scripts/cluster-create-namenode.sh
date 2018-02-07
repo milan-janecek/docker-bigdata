@@ -28,7 +28,7 @@ base_dir=$(dirname $0)/../..
 
 docker run -dit \
   --name nn${number} \
-  --hostname nn${number} \
+  --hostname nn${number}.cluster \
   --network=cluster \
   --expose ${prefix}9820 -p ${prefix}9820:${prefix}9820 \
   --expose ${prefix}9870 -p ${prefix}9870:${prefix}9870 \

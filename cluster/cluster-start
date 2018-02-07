@@ -52,3 +52,18 @@ docker container start ts
 
 echo "STARTING MAPREDHISTORYSERVER"
 docker container start mapredh
+
+echo "STARTING HMASTER 1"
+docker container start hm1
+
+echo "STARTING HMASTER 2"
+docker container start hm2
+
+echo "STARTING HREGIONSERVER 1"
+docker container start hrs1
+
+echo "STARTING HREGIONSERVER 2"
+docker container start hrs2
+
+echo "STARTING HREGIONSERVER 1 "
+docker container start hrs1

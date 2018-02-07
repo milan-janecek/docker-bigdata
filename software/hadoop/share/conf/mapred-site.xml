@@ -20,10 +20,10 @@
   </property>
   <property>
     <name>mapreduce.jobhistory.address</name>
-    <value>mapredh:10020</value>
+    <value>mapredh.cluster:10020</value>
   </property>
   <property>
     <name>mapreduce.jobhistory.webapp.address</name>
-    <value>mapredh:19888</value>
+    <value>mapredh.cluster:19888</value>
   </property>
 </configuration>

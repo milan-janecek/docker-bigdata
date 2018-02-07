@@ -11,7 +11,7 @@ base_dir=$(dirname $0)/../..
 
 docker run -dit \
   --name mapredh \
-  --hostname mapredh \
+  --hostname mapredh.cluster \
   --network=cluster \
   --expose 10020 -p 10020:10020 \
   --expose 19888 -p 19888:19888 \

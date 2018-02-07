@@ -35,7 +35,7 @@
   </property>
   <property>
     <name>hbase.zookeeper.quorum</name>
-    <value>zoo1:2181,zoo2:12181,zoo3:22181</value>
+    <value>zoo1.cluster:2181,zoo2.cluster:12181,zoo3.cluster:22181</value>
   </property>
   <property>
     <name>hbase.master.port</name>

@@ -11,7 +11,7 @@ base_dir=$(dirname $0)/../..
 
 docker run -dit \
   --name ts \
-  --hostname ts \
+  --hostname ts.cluster \
   --network=cluster \
   --expose 10200 -p 10200:10200 \
   --expose 8188 -p 8188:8188 \
