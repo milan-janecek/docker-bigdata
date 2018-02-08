@@ -41,14 +41,6 @@ if [ ! -d /usr/local/hadoop-$ver ]; then
   
   echo "COPYING HADOOP CONFIGURATION FILES FROM SHARE TO HADOOP CONF DIR"
   sudo cp -v $BASE_DIR/software/hadoop/share/conf/* /usr/local/hadoop-$ver/etc/hadoop
-
-  echo "MODIFYING HADOOP CONFIGURATION FILES"
-  sudo sed -i -r "s/([a-zA-Z0-9.]{1,})(:[0-9]{1,})/localhost\2/g" \
-    /usr/local/hadoop-$ver/etc/hadoop/hdfs-site.xml
-  sudo sed -i -r "s/([a-zA-Z0-9.]{1,})(:[0-9]{1,})/localhost\2/g" \
-    /usr/local/hadoop-$ver/etc/hadoop/yarn-site.xml
-  sudo sed -i -r "s/([a-zA-Z0-9.]{1,})(:[0-9]{1,})/localhost\2/g" \
-    /usr/local/hadoop-$ver/etc/hadoop/mapred-site.xml
     
   echo "HADOOP $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

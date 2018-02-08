@@ -24,55 +24,55 @@
   </property>
   <property>
     <name>yarn.resourcemanager.ha.rm-ids</name>
-    <value>rm1,rm2</value>
+    <value>resourcemanager1,resourcemanager2</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.hostname.rm1</name>
-    <value>rm1.cluster</value>
+    <name>yarn.resourcemanager.hostname.resourcemanager1</name>
+    <value>resourcemanager1.cluster</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.webapp.address.rm1</name>
-    <value>rm1.cluster:8088</value>
+    <name>yarn.resourcemanager.webapp.address.resourcemanager1</name>
+    <value>resourcemanager1.cluster:8088</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.scheduler.address.rm1</name>
-    <value>rm1.cluster:8030</value>
+    <name>yarn.resourcemanager.scheduler.address.resourcemanager1</name>
+    <value>resourcemanager1.cluster:8030</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.resource-tracker.address.rm1</name>
-    <value>rm1.cluster:8031</value>
+    <name>yarn.resourcemanager.resource-tracker.address.resourcemanager1</name>
+    <value>resourcemanager1.cluster:8031</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.address.rm1</name>
-    <value>rm1.cluster:8032</value>
+    <name>yarn.resourcemanager.address.resourcemanager1</name>
+    <value>resourcemanager1.cluster:8032</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.admin.address.rm1</name>
-    <value>rm1.cluster:8033</value>
+    <name>yarn.resourcemanager.admin.address.resourcemanager1</name>
+    <value>resourcemanager1.cluster:8033</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.hostname.rm2</name>
-    <value>rm2.cluster</value>
+    <name>yarn.resourcemanager.hostname.resourcemanager2</name>
+    <value>resourcemanager2.cluster</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.webapp.address.rm2</name>
-    <value>rm2.cluster:18088</value>
+    <name>yarn.resourcemanager.webapp.address.resourcemanager2</name>
+    <value>resourcemanager2.cluster:18088</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.scheduler.address.rm2</name>
-    <value>rm2.cluster:18030</value>
+    <name>yarn.resourcemanager.scheduler.address.resourcemanager2</name>
+    <value>resourcemanager2.cluster:18030</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.resource-tracker.address.rm2</name>
-    <value>rm2.cluster:18031</value>
+    <name>yarn.resourcemanager.resource-tracker.address.resourcemanager2</name>
+    <value>resourcemanager2.cluster:18031</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.address.rm2</name>
-    <value>rm2.cluster:18032</value>
+    <name>yarn.resourcemanager.address.resourcemanager2</name>
+    <value>resourcemanager2.cluster:18032</value>
   </property>
   <property>
-    <name>yarn.resourcemanager.admin.address.rm2</name>
-    <value>rm2:18033</value>
+    <name>yarn.resourcemanager.admin.address.resourcemanager2</name>
+    <value>resourcemanager2:18033</value>
   </property>
   <property>
 	<name>yarn.resourcemanager.recovery.enabled</name>
@@ -84,7 +84,7 @@
   </property>
     <property>
 	<name>yarn.resourcemanager.zk-address</name>
-    <value>zoo1.cluster:2181,zoo2.cluster:12181,zoo3.cluster:22181</value>
+    <value>zookeeper1.cluster:2181,zookeeper2.cluster:12181,zookeeper3.cluster:22181</value>
   </property>
   <!-- ************************ nodemanager setup ************************ -->
   <property>
@@ -122,7 +122,7 @@
   </property>
   <property>
     <name>yarn.log.server.url</name>
-    <value>http://mapredh.cluster:19888/jobhistory/logs</value>
+    <value>http://mapredhistoryserver1.cluster:19888/jobhistory/logs</value>
   </property>
   <!-- ********************** timelineserver setup ********************** -->
   <property>

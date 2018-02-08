@@ -1,0 +1,108 @@
+#!/bin/bash
+
+scripts=$(dirname $0)/scripts
+command=$1
+shift
+
+case "$command" in
+  
+  zookeeper)
+    $scripts/zookeeper $@
+  ;;
+  
+  namenode)
+    $scripts/namenode $@
+  ;;
+  
+  zkfc)
+    $scripts/zkfc $@
+  ;;
+  
+  datanode)
+    $scripts/datanode $@
+  ;;
+
+  create)
+    $scripts/zookeeper create 1
+    $scripts/zookeeper create 2
+    $scripts/zookeeper create 3
+    
+    $scripts/namenode create 1
+    $scripts/namenode create 2
+    $scripts/zkfc create 1
+    $scripts/zkfc create 2
+    
+    $scripts/datanode create 1
+    $scripts/datanode create 2
+    $scripts/datanode create 3
+  ;;
+  
+  start)
+    $scripts/zookeeper start 1
+    $scripts/zookeeper start 2
+    $scripts/zookeeper start 3
+    
+    $scripts/namenode start 1
+    $scripts/namenode start 2
+    $scripts/zkfc start 1
+    $scripts/zkfc start 2
+    
+    $scripts/datanode start 1
+    $scripts/datanode start 2
+    $scripts/datanode start 3
+  ;;
+  
+  stop)
+    $scripts/datanode stop 3
+    $scripts/datanode stop 2
+    $scripts/datanode stop 1
+    
+    $scripts/zkfc stop 2
+    $scripts/zkfc stop 1
+    $scripts/namenode stop 2
+    $scripts/namenode stop 1
+    
+    $scripts/zookeeper stop 3
+    $scripts/zookeeper stop 2
+    $scripts/zookeeper stop 1
+  ;;
+
+  delete)
+    $scripts/datanode delete 3
+    $scripts/datanode delete 2
+    $scripts/datanode delete 1
+  
+    $scripts/zkfc delete 2
+    $scripts/zkfc delete 1
+    $scripts/namenode delete 2
+    $scripts/namenode delete 1
+    
+    $scripts/zookeeper delete 3
+    $scripts/zookeeper delete 2
+    $scripts/zookeeper delete 1
+  ;;
+  
+  *)
+  echo
+  echo "Usage: cluster [COMMAND|COMPONENT] [OPTIONS]"
+  echo 
+  echo "Available components, components accept options:"
+  echo "  zookeeper"
+  echo "  namenode"
+  echo "  zkfc"
+  echo "  datanode"
+  echo "  resourcemanager"
+  echo "  nodemanager"
+  echo "  timelineserver"
+  echo "  mapredhistoryserver"
+  echo "  hmaster"
+  echo "  hregionserver"
+  echo 
+  echo "Available commands, manipulate the entire cluster:"
+  echo "  create"
+  echo "  start"
+  echo "  stop"
+  echo "  delete"
+  exit 1
+  
+esac

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+component=$(basename $0)
+
+function print_usage() {
+  echo
+  echo "Usage: $component COMMAND NUMBER"
+  echo 
+  echo "Available commands:"
+  echo 
+  echo "  create"
+  echo "  start"
+  echo "  stop"
+  echo "  delete"
+}
+
+if [ $# -ne 2 ]; then
+  print_usage
+  exit 1
+fi
+
+base_dir=$(dirname $0)/../..
+command=$1
+number=$2
+name=${component}${number}
+
+case "$command" in 
+  create)
+    echo "Creating $name"
+    
+    docker run -dit \
+      --name $name \
+      --network=container:namenode${number} \
+      --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+      hadoop:$HADOOP_VER /share/start-zkfc.sh
+    
+    ip=$(docker inspect \
+      --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+      namenode$number)
+
+    sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
+  ;;
+  start)
+    echo "Starting $name"
+    docker container start $name
+  ;; 
+  stop)
+    echo "Stopping $name"
+    docker container kill $name
+  ;;
+  delete)
+    echo "Deleting $name"
+    docker container rm $name
+    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+  ;;
+  *)
+    print_usage
+    exit 1
+esac
