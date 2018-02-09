@@ -122,7 +122,7 @@
   </property>
   <property>
     <name>yarn.log.server.url</name>
-    <value>http://mapredhistoryserver1.cluster:19888/jobhistory/logs</value>
+    <value>http://mapredhistoryserver.cluster:19888/jobhistory/logs</value>
   </property>
   <!-- ********************** timelineserver setup ********************** -->
   <property>

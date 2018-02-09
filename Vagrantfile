@@ -40,29 +40,21 @@ Vagrant.configure("2") do |config|
     dockerhost.vm.network :private_network, ip: '192.168.42.43'
     dockerhost.vm.synced_folder '.', "#{SYNCED_FOLDER}"
 
-    # 2 namenodes
-    # 3 datanodes
-    # 2 resourcemanagers
-    # 3 nodemanagers (running on datanodes)
-    # 3 zookeepers
-    # 1 timelineserver
-    # 1 mapredhistoryserver
-    # 2 hmasters
     dockerhost.hostmanager.aliases = %w(
-      nn1.cluster
-      nn2.cluster
-      dn1.cluster 
-      dn2.cluster
-      dn3.cluster
-      rm1.cluster
-      rm2.cluster
-      zoo1.cluster
-      zoo2.cluster
-      zoo3.cluster
-      ts.cluster
-      mapredh.cluster
-      hm1.cluster
-      hm2.cluster
+      namenode1.cluster
+      namenode2.cluster
+      datanode1.cluster 
+      datanode2.cluster
+      datanode3.cluster
+      resourcenanager1.cluster
+      resourcenanager2.cluster
+      zookeeper1.cluster
+      zookeeper2.cluster
+      zookeeper3.cluster
+      timelineserver.cluster
+      mapredhistoryserver.cluster
+      hmaster1.cluster
+      hmaster2.cluster
     )
      
     dockerhost.vm.provider 'virtualbox' do |vb|

@@ -21,6 +21,10 @@ case "$command" in
   datanode)
     $scripts/datanode $@
   ;;
+  
+  resourcemanager)
+    $scripts/resourcemanager $@
+  ;;
 
   create)
     $scripts/zookeeper create 1
