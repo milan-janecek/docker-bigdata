@@ -1,29 +1,75 @@
+# helper methods to detect number of host cpus and vcpus for guest
+
+def host_cpus
+  case RbConfig::CONFIG['host_os']
+  when /darwin/
+    Integer(`sysctl -n hw.ncpu`)
+  when /linux/
+    Integer(`cat /proc/cpuinfo | grep processor | wc -l`)
+  else
+    Integer(`wmic cpu get NumberOfLogicalProcessors`.split("\n")[2].to_i)
+  end
+end
+
+# defaults to half of what is on host - if host_cpus is unable to determine
+# host cpus => then defaults to 4
+def guest_cpus
+  begin
+    host_cpus / 2
+  rescue
+    4
+  end
+end
+
+# helper methods to detect number of total memory of host and memory for guest
+
+def host_memory
+  case RbConfig::CONFIG['host_os']
+  when /darwin/
+    Integer(`sysctl -n hw.memsize`.to_i / 1024 / 1024)
+  when /linux/
+    Integer(`grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i / 1024)
+  else
+    Integer(`wmic ComputerSystem get TotalPhysicalMemory`.split("\n")[2].to_i / 1024 / 1024)
+  end
+end
+
+# defaults to half of what is on host - if host_memory is unable to determine
+# host memory => then defaults to 8 GB
+def guest_memory
+  begin
+    host_memory / 2
+  rescue
+    8192
+  end
+end
+
 # configuration is done via environment variables with reasonable defaults
 # change APACHE_MIRROR to a mirror close to you to shorten download times
 
-def getConfig(name, default)
+def get_config(name, default)
   return ENV[name].nil? ? default : ENV[name]
 end
 
-ORACLE_JDK_URL=getConfig('ORACLE_JDK_URL', 'http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.tar.gz')
+ORACLE_JDK_URL=get_config('ORACLE_JDK_URL', 'http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1/jdk-8u162-linux-x64.tar.gz')
 
-ORACLE_JDK_SHA256_CHECKSUM=getConfig('ORACLE_JDK_SHA256_CHECKSUM', '68ec82d47fd9c2b8eb84225b6db398a72008285fafc98631b1ff8d2229680257')
+ORACLE_JDK_SHA256_CHECKSUM=get_config('ORACLE_JDK_SHA256_CHECKSUM', '68ec82d47fd9c2b8eb84225b6db398a72008285fafc98631b1ff8d2229680257')
 
-APACHE_MIRROR = getConfig('APACHE_MIRROR', 'http://mirror.hosting90.cz/apache')
+APACHE_MIRROR = get_config('APACHE_MIRROR', 'http://mirror.hosting90.cz/apache')
 
-HADOOP_VER = getConfig('HADOOP_VER', '2.7.5')
+HADOOP_VER = get_config('HADOOP_VER', '2.7.5')
 
-HADOOP_SHA1_CHECKSUM = getConfig('HADOOP_SHA1_CHECKSUM', '0f90ef671530c2aa42cde6da111e8e47e9cd659e')
+HADOOP_SHA1_CHECKSUM = get_config('HADOOP_SHA1_CHECKSUM', '0f90ef671530c2aa42cde6da111e8e47e9cd659e')
 
-ZOOKEEPER_VER = getConfig('ZOOKEEPER_VER', '3.4.11')
+ZOOKEEPER_VER = get_config('ZOOKEEPER_VER', '3.4.11')
 
-ZOOKEEPER_SHA1_CHECKSUM = getConfig('ZOOKEEPER_SHA1_CHECKSUM', '9268b4aed71dccad3d7da5bfa5573b66d2c9b565')
+ZOOKEEPER_SHA1_CHECKSUM = get_config('ZOOKEEPER_SHA1_CHECKSUM', '9268b4aed71dccad3d7da5bfa5573b66d2c9b565')
 
-HBASE_VER = getConfig('HBASE_VER', '1.2.6')
+HBASE_VER = get_config('HBASE_VER', '1.2.6')
 
-HBASE_SHA1_CHECKSUM = getConfig('HBASE_SHA1_CHECKSUM', '19fe7bc1443d54bbf1fa405dfde62e37b3ea6cf6')
+HBASE_SHA1_CHECKSUM = get_config('HBASE_SHA1_CHECKSUM', '19fe7bc1443d54bbf1fa405dfde62e37b3ea6cf6')
 
-SYNCED_FOLDER = getConfig('SYNCED_FOLDER', '/vagrant')
+SYNCED_FOLDER = get_config('SYNCED_FOLDER', '/vagrant')
   
 Vagrant.configure("2") do |config|
   
@@ -46,8 +92,8 @@ Vagrant.configure("2") do |config|
       datanode1.cluster 
       datanode2.cluster
       datanode3.cluster
-      resourcenanager1.cluster
-      resourcenanager2.cluster
+      resourcemanager1.cluster
+      resourcemanager2.cluster
       zookeeper1.cluster
       zookeeper2.cluster
       zookeeper3.cluster
@@ -58,8 +104,8 @@ Vagrant.configure("2") do |config|
     )
      
     dockerhost.vm.provider 'virtualbox' do |vb|
-      vb.memory = 20480
-      vb.cpus = 10
+      vb.memory = guest_memory
+      vb.cpus = guest_cpus
     end
 
     dockerhost.vm.provision :shell, path: 'provision/install-docker.sh'

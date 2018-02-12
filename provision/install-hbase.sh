@@ -63,6 +63,8 @@ if [ ! -d /usr/local/hbase-$ver ]; then
   
   echo "COPYING HBASE CONFIGURATION FILES FROM SHARE TO HBASE CONF DIR"
   sudo cp -v $BASE_DIR/software/hbase/share/conf/* $hbase_home/conf
+  sudo sed -i "s#<value>/data</value>#<value>/tmp</value>#" \
+    $hbase_home/conf/hbase-site.xml
           
   echo "HBASE $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

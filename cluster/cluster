@@ -25,6 +25,26 @@ case "$command" in
   resourcemanager)
     $scripts/resourcemanager $@
   ;;
+  
+  nodemanager)
+    $scripts/nodemanager $@
+  ;;
+  
+  timelineserver)
+    $scripts/timelineserver $@
+  ;;
+  
+  mapredhistoryserver)
+    $scripts/mapredhistoryserver $@
+  ;;
+  
+  hmaster)
+    $scripts/hmaster $@
+  ;;
+  
+  hregionserver)
+    $scripts/hregionserver $@
+  ;;
 
   create)
     $scripts/zookeeper create 1
@@ -39,6 +59,28 @@ case "$command" in
     $scripts/datanode create 1
     $scripts/datanode create 2
     $scripts/datanode create 3
+    
+    echo "Creating /tmp/logs on HDFS to store aggregated logs"
+    hadoop fs -mkdir /tmp
+    hadoop fs -mkdir /tmp/logs
+    
+    $scripts/resourcemanager create 1
+    $scripts/resourcemanager create 2
+    
+    $scripts/nodemanager create 1
+    $scripts/nodemanager create 2
+    $scripts/nodemanager create 3
+    
+    $scripts/timelineserver create
+    
+    $scripts/mapredhistoryserver create
+    
+    $scripts/hmaster create 1
+    $scripts/hmaster create 2
+    
+    $scripts/hregionserver create 1
+    $scripts/hregionserver create 2
+    $scripts/hregionserver create 3
   ;;
   
   start)
@@ -54,9 +96,45 @@ case "$command" in
     $scripts/datanode start 1
     $scripts/datanode start 2
     $scripts/datanode start 3
+    
+    $scripts/resourcemanager start 1
+    $scripts/resourcemanager start 2
+    
+    $scripts/nodemanager start 1
+    $scripts/nodemanager start 2
+    $scripts/nodemanager start 3
+    
+    $scripts/timelineserver start
+    
+    $scripts/mapredhistoryserver start
+    
+    $scripts/hmaster start 1
+    $scripts/hmaster start 2
+    
+    $scripts/hregionserver start 1
+    $scripts/hregionserver start 2
+    $scripts/hregionserver start 3
   ;;
   
   stop)
+    $scripts/hregionserver stop 3
+    $scripts/hregionserver stop 2
+    $scripts/hregionserver stop 1
+  
+    $scripts/hmaster stop 2
+    $scripts/hmaster stop 1
+  
+    $scripts/mapredhistoryserver stop
+  
+    $scripts/timelineserver stop
+  
+    $scripts/nodemanager stop 3
+    $scripts/nodemanager stop 2
+    $scripts/nodemanager stop 1
+    
+    $scripts/resourcemanager stop 2
+    $scripts/resourcemanager stop 1
+  
     $scripts/datanode stop 3
     $scripts/datanode stop 2
     $scripts/datanode stop 1
@@ -72,6 +150,24 @@ case "$command" in
   ;;
 
   delete)
+    $scripts/hregionserver delete 3
+    $scripts/hregionserver delete 2
+    $scripts/hregionserver delete 1
+  
+    $scripts/hmaster delete 2
+    $scripts/hmaster delete 1
+    
+    $scripts/mapredhistoryserver delete
+  
+    $scripts/timelineserver delete
+   
+    $scripts/nodemanager delete 3
+    $scripts/nodemanager delete 2
+    $scripts/nodemanager delete 1
+   
+    $scripts/resourcemanager delete 2
+    $scripts/resourcemanager delete 1
+  
     $scripts/datanode delete 3
     $scripts/datanode delete 2
     $scripts/datanode delete 1

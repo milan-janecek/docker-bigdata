@@ -127,7 +127,7 @@
   <!-- ********************** timelineserver setup ********************** -->
   <property>
     <name>yarn.timeline-service.hostname</name>
-    <value>ts</value>
+    <value>timelineserver.cluster</value>
   </property>
   <property>
     <name>yarn.timeline-service.enabled</name>

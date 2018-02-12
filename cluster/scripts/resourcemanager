@@ -76,6 +76,7 @@ case "$command" in
     echo "Deleting $name"
     docker container rm $name
     sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    docker volume rm $name-data
   ;;
   *)
     print_usage
