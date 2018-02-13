@@ -40,6 +40,8 @@ case "$command" in
       --network=container:datanode${number} \
       --mount source=$name-data,target=/data \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+      -m 2560M --memory-swap 2560M \
+      -e "YARN_NODEMANAGER_HEAPSIZE=410" \
       hadoop:$HADOOP_VER /share/start-nodemanager.sh
 
     ip=$(docker inspect \

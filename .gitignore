@@ -1,5 +1,14 @@
+# project specific
 *.log
 /.vagrant
-/examples
 *.tar.gz
 /software/hbase/hadoop
+
+# intellij
+.idea/
+*.iml
+*.iws
+
+# maven
+log/
+target/

@@ -32,6 +32,8 @@ case "$command" in
       --name $name \
       --network=container:namenode${number} \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+      -m 256M --memory-swap 256M \
+      -e "HADOOP_ZKFC_OPTS=-Xmx205m" \
       hadoop:$HADOOP_VER /share/start-zkfc.sh
     
     ip=$(docker inspect \

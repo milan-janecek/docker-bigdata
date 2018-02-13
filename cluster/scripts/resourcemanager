@@ -56,6 +56,8 @@ case "$command" in
       --expose ${prefix}8033 -p ${prefix}8033:${prefix}8033 \
       --mount source=$name-data,target=/data \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+      -m 512M --memory-swap 512M \
+      -e "YARN_RESOURCEMANAGER_HEAPSIZE=410" \
       hadoop:$HADOOP_VER /share/start-resourcemanager.sh
 
     ip=$(docker inspect \

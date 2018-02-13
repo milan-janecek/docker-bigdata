@@ -52,6 +52,8 @@ case "$command" in
       --expose ${prefix}3888 -p ${prefix}3888:${prefix}3888 \
       --mount source=$name-data,target=/data \
       --mount type=bind,source=$base_dir/software/zookeeper/share,target=/share \
+      -m 256M --memory-swap 256M \
+      -e "JVMFLAGS=-Xmx205m" \
       zookeeper:$ZOOKEEPER_VER /share/start-zookeeper.sh
     
     ip=$(docker inspect \

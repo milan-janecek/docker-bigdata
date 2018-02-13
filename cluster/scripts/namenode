@@ -55,6 +55,8 @@ case "$command" in
       --mount source=$name-data,target=/data \
       --mount source=edits,target=/edits \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+      -m 512M --memory-swap 512M \
+      -e "HADOOP_NAMENODE_OPTS=-Xmx410m" \
       hadoop:$HADOOP_VER /share/start-namenode.sh
 
     ip=$(docker inspect \
