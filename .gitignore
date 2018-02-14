@@ -2,6 +2,7 @@
 *.log
 /.vagrant
 *.tar.gz
+*.tgz
 /software/hbase/hadoop
 
 # intellij

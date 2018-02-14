@@ -34,6 +34,8 @@ case "$command" in
       --mount source=$name-data,target=/data \
       --mount type=bind,source=$base_dir/software/hbase/share,target=/share \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/hadoop-share \
+      -m 1024M --memory-swap 1024M \
+      -e "HBASE_REGIONSERVER_OPTS=-Xmx820m" \
       hbase:${HBASE_VER}_${HADOOP_VER} /share/start-hregionserver.sh
 
     ip=$(docker inspect \

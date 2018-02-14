@@ -52,6 +52,8 @@ case "$command" in
       --mount source=$name-data,target=/data \
       --mount type=bind,source=$base_dir/software/hbase/share,target=/share \
       --mount type=bind,source=$base_dir/software/hadoop/share,target=/hadoop-share \
+      -m 512M --memory-swap 512M \
+      -e "HBASE_MASTER_OPTS=-Xmx410m" \
       hbase:${HBASE_VER}_${HADOOP_VER} /share/start-hmaster.sh
 
     ip=$(docker inspect \

@@ -69,6 +69,10 @@ HBASE_VER = get_config('HBASE_VER', '1.2.6')
 
 HBASE_SHA1_CHECKSUM = get_config('HBASE_SHA1_CHECKSUM', '19fe7bc1443d54bbf1fa405dfde62e37b3ea6cf6')
 
+SPARK_VER = get_config('SPARK_VER', '2.2.1')
+
+SPARK_SHA512_CHECKSUM = get_config('SPARK_SHA512_CHECKSUM', '25a0fa4af441ab6c39408d5e555c74e99d7b1b6eaea7ec61168d081812a6c71c760d8b0394a1fa1930fe80067033f5f682aa4dd4b6d1d8b55427b027857b2424')
+
 SYNCED_FOLDER = get_config('SYNCED_FOLDER', '/vagrant')
   
 Vagrant.configure("2") do |config|
@@ -101,6 +105,10 @@ Vagrant.configure("2") do |config|
       mapredhistoryserver.cluster
       hmaster1.cluster
       hmaster2.cluster
+      hregionserver1.cluster
+      hregionserver2.cluster
+      hregionserver3.cluster
+      sparkhistoryserver.cluster
     )
      
     dockerhost.vm.provider 'virtualbox' do |vb|
@@ -108,7 +116,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = guest_cpus
     end
 
-    dockerhost.vm.provision :shell, path: 'provision/install-docker.sh'
+    dockerhost.vm.provision :shell, path: 'provision/install-docker-ubuntu.sh'
 
     dockerhost.vm.provision 'shell' do |s|
       s.path = 'provision/install-java.sh'
@@ -149,7 +157,17 @@ Vagrant.configure("2") do |config|
       ]
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-   
+ 
+    dockerhost.vm.provision 'shell' do |s|
+      s.path = 'provision/install-spark.sh'
+      s.args = [
+        "#{APACHE_MIRROR}/spark",
+        "#{SPARK_VER}",
+        "#{SPARK_SHA512_CHECKSUM}"
+      ]
+      s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
+    end
+ 
     dockerhost.vm.provision 'shell' do |s|
       s.path = 'provision/build-images.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
@@ -159,7 +177,7 @@ Vagrant.configure("2") do |config|
       s.path = 'provision/post-install.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-    
+  
   end
   
 end

@@ -3,7 +3,7 @@ if [ $# -ne 2vagran ]; then
   exit 1
 fi
 
-BASE_DIR=${BASE_DIR:-$(pwd)/..}
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 oracle_jdk_url=$1
 sha256_checksum=$2

@@ -24,3 +24,8 @@ sudo apt-get install -y docker-ce
 sudo usermod -aG docker vagrant
 
 sudo systemctl enable docker
+
+echo "Activating docker swap limit support"
+sudo sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"/' /etc/default/grub
+sudo update-grub
+echo "Reboot your machine to apply GRUB changes"

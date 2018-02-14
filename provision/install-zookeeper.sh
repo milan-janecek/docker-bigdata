@@ -5,7 +5,7 @@ if [ $# -ne 3 ]; then
   exit 1
 fi
 
-BASE_DIR=${BASE_DIR:-$(pwd)/..}
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 mirror=$1
 ver=$2

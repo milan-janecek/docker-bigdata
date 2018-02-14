@@ -4,6 +4,11 @@ scripts=$(dirname $0)/scripts
 command=$1
 shift
 
+network=$(docker network ls | grep cluster)
+if [ -z "$network" ]; then
+  docker network create cluster
+fi
+
 case "$command" in
   
   zookeeper)
@@ -61,8 +66,7 @@ case "$command" in
     $scripts/datanode create 3
     
     echo "Creating /tmp/logs on HDFS to store aggregated logs"
-    hadoop fs -mkdir /tmp
-    hadoop fs -mkdir /tmp/logs
+    hadoop fs -mkdir -p /tmp/logs
     
     $scripts/resourcemanager create 1
     $scripts/resourcemanager create 2
@@ -81,6 +85,10 @@ case "$command" in
     $scripts/hregionserver create 1
     $scripts/hregionserver create 2
     $scripts/hregionserver create 3
+    
+    echo "Creating /spark/event-log and adding spark jars to HDFS"
+    hadoop fs -mkdir -p /spark/event-log
+    hadoop fs -copyFromLocal $SPARK_HOME/jars /spark
   ;;
   
   start)
