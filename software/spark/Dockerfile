@@ -8,7 +8,8 @@ ARG VER
 
 ADD spark-$VER-bin-without-hadoop.tgz /usr/local
 
-RUN mv /usr/local/spark-$VER* /usr/local/spark-$VER \
+RUN apk --no-cache add procps \
+ && mv /usr/local/spark-$VER* /usr/local/spark-$VER \
  && mv /usr/local/spark-$VER/conf/spark-env.sh.template /usr/local/spark-$VER/conf/spark-env.sh \
  && mv /usr/local/spark-$VER/conf/spark-defaults.conf.template /usr/local/spark-$VER/conf/spark-defaults.conf \
  && echo export SPARK_DIST_CLASSPATH=$(hadoop classpath) >> /usr/local/spark-$VER/conf/spark-env.sh \

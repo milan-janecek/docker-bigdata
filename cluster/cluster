@@ -50,6 +50,10 @@ case "$command" in
   hregionserver)
     $scripts/hregionserver $@
   ;;
+  
+  sparkhistoryserver)
+    $scripts/sparkhistoryserver $@
+  ;;
 
   create)
     $scripts/zookeeper create 1
