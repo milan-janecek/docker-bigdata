@@ -1,11 +1,12 @@
 #!/bin/bash
 
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
+source $BASE_DIR/cluster/scripts/functions.sh
+
 if [ $# -ne 3 ]; then
   echo "ERROR: Exactly 3 arguments are needed: mirror, version, sha1_checksum."
   exit 1
 fi
-
-BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 mirror=$1
 ver=$2
@@ -48,14 +49,8 @@ else
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE HADOOP $ver ***"
-echo "SETTING HADOOP_HOME"
-sudo sh -c \
-  "echo export HADOOP_HOME=/usr/local/hadoop-$ver > /etc/profile.d/hadoop-home.sh"
-  
-echo "ADDING HADOOP BIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/hadoop-'$ver'/bin > /etc/profile.d/hadoop-bin.sh'
-  
-echo "SETTING HADOOP_VER"
-sudo sh -c \
-  "echo export HADOOP_VER=$ver > /etc/profile.d/hadoop-ver.sh"
+profileFile="/etc/profile.d/hadoop.sh"
+sudo rm -rf $profileFile
+addLineToFile "export HADOOP_HOME=/usr/local/hadoop-$ver" $profileFile
+addLineToFile 'export PATH=$PATH:$HADOOP_HOME/bin' $profileFile
+addLineToFile "export HADOOP_VER=$ver" $profileFile

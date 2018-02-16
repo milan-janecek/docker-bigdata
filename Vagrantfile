@@ -152,8 +152,7 @@ Vagrant.configure("2") do |config|
       s.args = [
         "#{APACHE_MIRROR}/hbase",
         "#{HBASE_VER}",
-        "#{HBASE_SHA1_CHECKSUM}",
-        "#{HADOOP_VER}"
+        "#{HBASE_SHA1_CHECKSUM}"
       ]
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
@@ -177,7 +176,7 @@ Vagrant.configure("2") do |config|
       s.path = 'provision/post-install.sh'
       s.env = { 'BASE_DIR' => "#{SYNCED_FOLDER}" }
     end
-  
+    
   end
   
 end

@@ -1,22 +1,21 @@
 #!/bin/bash
 
-if [ $# -ne 4 ]; then
-  echo "ERROR: Exactly 4 arguments are needed: mirror, version, sha1_checksum, hadoop_ver."
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
+source $BASE_DIR/cluster/scripts/functions.sh
+
+if [ $# -ne 3 ]; then
+  echo "ERROR: Exactly 4 arguments are needed: mirror, version, sha1_checksum."
   exit 1
 fi
-
-BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 mirror=$1
 ver=$2
 sha1_checksum=$3
-hadoop_ver=$4
 
 echo "*** SCRIPT ARGUMENTS ***"
 echo "mirror: $1"
 echo "version: $2"
 echo "sha1_checksum: $3"
-echo "hadoop_ver: $4"
 
 echo "*** INSTALLING HBASE $ver ***"
 if [ ! -d /usr/local/hbase-$ver ]; then
@@ -41,28 +40,29 @@ if [ ! -d /usr/local/hbase-$ver ]; then
   echo "EXTRACTING HBASE ARCHIVE"
   sudo tar -zxf $BASE_DIR/software/hbase/hbase-$ver-bin.tar.gz -C /usr/local
   
-  echo "*** REPLACING HADOOP JARS AND PREPARING DOCKER BUILD PROCESS ***"
+  echo "*** REPLACING HADOOP JARS FOR LOCAL INSTALL AND MOVING HADOOP JARS TO DOCKER CONTEXT FOLDER ***"
   hbase_home=/usr/local/hbase-$ver
-  hadoop_home=/usr/local/hadoop-$hadoop_ver
-  hadoop2hbase=$BASE_DIR/software/hbase/hadoop/$hadoop_ver
+  hadoop2hbase=$BASE_DIR/software/hbase/hadoop/$HADOOP_VER
   mkdir -p $hadoop2hbase/jars
   find $hbase_home -name "hadoop-*.jar" | while read hbase_file; do
     filepattern=$(echo $(basename $hbase_file) | sed 's/[0-9].[0-9].[0-9]/[0-9].[0-9].[0-9]/')
-    find $hadoop_home -regex "$hadoop_home/.*$filepattern" | while read hadoop_file; do
+    find $HADOOP_HOME -regex "$HADOOP_HOME/.*$filepattern" | while read hadoop_file; do
       sudo rm -rf $hbase_file
       sudo cp -v $hadoop_file $(dirname $hbase_file)
       sudo cp -v $hadoop_file $hadoop2hbase/jars
     done
   done
   mkdir -p $hadoop2hbase/native
-  cp -v $hadoop_home/lib/native/* $hadoop2hbase/native
+  cp -v $HADOOP_HOME/lib/native/* $hadoop2hbase/native
   
-  echo "COPYING HDFS-SITE.XML TO HBASE CONF DIR"
-  sudo cp -v $hadoop_home/etc/hadoop/core-site.xml $hbase_home/conf
-  sudo cp -v $hadoop_home/etc/hadoop/hdfs-site.xml $hbase_home/conf
+  echo "COPYING core-sitex.xml AND hdfs-site.xml TO HBASE CONF DIR"
+  sudo cp -v $HADOOP_HOME/etc/hadoop/core-site.xml $hbase_home/conf
+  sudo cp -v $HADOOP_HOME/etc/hadoop/hdfs-site.xml $hbase_home/conf
   
   echo "COPYING HBASE CONFIGURATION FILES FROM SHARE TO HBASE CONF DIR"
   sudo cp -v $BASE_DIR/software/hbase/share/conf/* $hbase_home/conf
+  
+  echo "CHANGING /data TO /tmp FOR LOCAL INSTALATION"
   sudo sed -i "s#<value>/data</value>#<value>/tmp</value>#" \
     $hbase_home/conf/hbase-site.xml
           
@@ -72,10 +72,8 @@ else
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE HBASE $ver ***"
-echo "ADDING HBASE BIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/hbase-'$ver'/bin > /etc/profile.d/hbase-bin.sh'
-  
-echo "SETTING HBASE_VER"
-sudo sh -c \
-  "echo export HBASE_VER=$ver > /etc/profile.d/hbase-ver.sh"
+profileFile="/etc/profile.d/hbase.sh"
+sudo rm -rf $profileFile
+addLineToFile "export HBASE_HOME=/usr/local/hbase-$ver" $profileFile
+addLineToFile 'export PATH=$PATH:$HBASE_HOME/bin' $profileFile
+addLineToFile "export HBASE_VER=$ver" $profileFile

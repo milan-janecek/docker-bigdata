@@ -1,11 +1,12 @@
 #!/bin/bash
 
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
+source $BASE_DIR/cluster/scripts/functions.sh
+
 if [ $# -ne 3 ]; then
   echo "ERROR: Exactly 3 arguments are needed: mirror, version, sha1_checksum."
   exit 1
 fi
-
-BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 mirror=$1
 ver=$2
@@ -49,10 +50,8 @@ else
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE ZOOKEEPER $ver ***"
-echo "ADDING ZOOKEEPER BIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/zookeeper-'$ver'/bin > /etc/profile.d/zookeeper-bin.sh'
-  
-echo "SETTING ZOOKEEPER_VER"
-sudo sh -c \
-  "echo export ZOOKEEPER_VER=$ver > /etc/profile.d/zookeeper-ver.sh"
+profileFile="/etc/profile.d/zookeeper.sh"
+sudo rm -rf $profileFile
+addLineToFile "export ZOOKEEPER_HOME=/usr/local/zookeeper-$ver" $profileFile
+addLineToFile 'export PATH=$PATH:$ZOOKEEPER_HOME/bin' $profileFile
+addLineToFile "export ZOOKEEPER_VER=$ver" $profileFile

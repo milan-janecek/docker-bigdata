@@ -1,11 +1,12 @@
 #!/bin/bash
 
+BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
+source $BASE_DIR/cluster/scripts/functions.sh
+
 if [ $# -ne 3 ]; then
   echo "ERROR: Exactly 3 arguments are needed: mirror, version, sha512_checksum."
   exit 1
 fi
-
-BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
 mirror=$1
 ver=$2
@@ -39,45 +40,30 @@ if [ ! -d /usr/local/spark-$ver ]; then
   sudo tar -zxf $BASE_DIR/software/spark/spark-$ver-bin-without-hadoop.tgz -C /usr/local
   sudo mv /usr/local/spark-$ver* /usr/local/spark-$ver
 
-  sudo mv /usr/local/spark-$ver/conf/spark-env.sh.template /usr/local/spark-$ver/conf/spark-env.sh
-  sudo mv /usr/local/spark-$ver/conf/spark-defaults.conf.template /usr/local/spark-$ver/conf/spark-defaults.conf
-  
+  sparkEnvFile="/usr/local/spark-$ver/conf/spark-env.sh"
+
   echo "ADDING HADOOP TO SPARK"
-  sudo sh -c \
-    'echo export SPARK_DIST_CLASSPATH=\$\(hadoop classpath\) >> /usr/local/spark-2.2.1/conf/spark-env.sh'
+  addLineToFile 'export SPARK_DIST_CLASSPATH=$(hadoop classpath)' $sparkEnvFile
+  addLineToFile 'export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native' $sparkEnvFile
   
   echo "SETTING HADOOP/YARN CONFIGURATION DIRECTORIES"
-  sudo sh -c \
-    'echo export HADOOP_CONF_DIR=\$HADOOP_HOME/etc/hadoop >> /usr/local/spark-'$ver'/conf/spark-env.sh'
-  sudo sh -c \
-    'echo export YARN_CONF_DIR=\$HADOOP_HOME/etc/hadoop >> /usr/local/spark-'$ver'/conf/spark-env.sh'
+  addLineToFile 'export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop' $sparkEnvFile
+  addLineToFile 'export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop' $sparkEnvFile
     
   echo "SETTING SPARK DEFAULTS"
-  sudo sh -c \
-    'echo spark.yarn.jars hdfs:///spark/jars/* >> /usr/local/spark-'$ver'/conf/spark-defaults.conf'
-  sudo sh -c \
-    'echo spark.eventLog.enabled true >> /usr/local/spark-'$ver'/conf/spark-defaults.conf'
-  sudo sh -c \
-    'echo spark.eventLog.dir hdfs:///spark/event-log >> /usr/local/spark-'$ver'/conf/spark-defaults.conf'  
-      
+  sparkDefaultsFile="/usr/local/spark-$ver/conf/spark-defaults.conf"
+  addLineToFile "spark.yarn.jars hdfs:///spark/jars/*" $sparkDefaultsFile
+  addLineToFile "spark.eventLog.enabled true" $sparkDefaultsFile
+  addLineToFile "spark.eventLog.dir hdfs:///spark/event-log" $sparkDefaultsFile
+   
   echo "SPARK $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED"
 else
   echo "SPARK $ver IS ALREADY INSTALLED"
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE SPARK $ver ***"
-echo "SETTING SPARK_HOME"
-sudo sh -c \
-  "echo export SPARK_HOME=/usr/local/spark-$ver > /etc/profile.d/spark-home.sh"
-  
-echo "ADDING SPARK BIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/spark-'$ver'/bin > /etc/profile.d/spark-bin.sh'
-  
-echo "ADDING SPARK SBIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/spark-'$ver'/sbin > /etc/profile.d/spark-sbin.sh'
-  
-echo "SETTING SPARK_VER"
-sudo sh -c \
-  "echo export SPARK_VER=$ver > /etc/profile.d/spark-ver.sh"
+profileFile="/etc/profile.d/spark.sh"
+sudo rm -rf $profileFile
+addLineToFile "export SPARK_HOME=/usr/local/spark-$ver" $profileFile
+addLineToFile 'export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin' $profileFile
+addLineToFile "export SPARK_VER=$ver" $profileFile

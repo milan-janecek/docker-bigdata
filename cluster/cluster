@@ -1,12 +1,16 @@
 #!/bin/bash
 
 scripts=$(dirname $0)/scripts
+source $scripts/functions.sh
 command=$1
 shift
 
 network=$(docker network ls | grep cluster)
 if [ -z "$network" ]; then
   docker network create cluster
+  echo "SETTING SPARK LOCAL IP TO BIND TO IP OF DOCKER HOST"
+  docker_host_ip=$(docker network inspect cluster --format '{{(index .IPAM.Config 0).Gateway}}')
+  addLineToFile "export SPARK_LOCAL_IP=$docker_host_ip" $SPARK_HOME/conf/spark-env.sh
 fi
 
 case "$command" in
@@ -93,6 +97,8 @@ case "$command" in
     echo "Creating /spark/event-log and adding spark jars to HDFS"
     hadoop fs -mkdir -p /spark/event-log
     hadoop fs -copyFromLocal $SPARK_HOME/jars /spark
+    
+    $scripts/sparkhistoryserver create
   ;;
   
   start)
@@ -126,9 +132,13 @@ case "$command" in
     $scripts/hregionserver start 1
     $scripts/hregionserver start 2
     $scripts/hregionserver start 3
+    
+    $scripts/sparkhistoryserver start
   ;;
   
   stop)
+    $scripts/sparkhistoryserver stop
+   
     $scripts/hregionserver stop 3
     $scripts/hregionserver stop 2
     $scripts/hregionserver stop 1
@@ -162,6 +172,8 @@ case "$command" in
   ;;
 
   delete)
+    $scripts/sparkhistoryserver delete
+  
     $scripts/hregionserver delete 3
     $scripts/hregionserver delete 2
     $scripts/hregionserver delete 1
