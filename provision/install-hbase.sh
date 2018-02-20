@@ -54,17 +54,6 @@ if [ ! -d /usr/local/hbase-$ver ]; then
   done
   mkdir -p $hadoop2hbase/native
   cp -v $HADOOP_HOME/lib/native/* $hadoop2hbase/native
-  
-  echo "COPYING core-sitex.xml AND hdfs-site.xml TO HBASE CONF DIR"
-  sudo cp -v $HADOOP_HOME/etc/hadoop/core-site.xml $hbase_home/conf
-  sudo cp -v $HADOOP_HOME/etc/hadoop/hdfs-site.xml $hbase_home/conf
-  
-  echo "COPYING HBASE CONFIGURATION FILES FROM SHARE TO HBASE CONF DIR"
-  sudo cp -v $BASE_DIR/software/hbase/share/conf/* $hbase_home/conf
-  
-  echo "CHANGING /data TO /tmp FOR LOCAL INSTALATION"
-  sudo sed -i "s#<value>/data</value>#<value>/tmp</value>#" \
-    $hbase_home/conf/hbase-site.xml
           
   echo "HBASE $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

@@ -39,9 +39,6 @@ if [ ! -d /usr/local/hadoop-$ver ]; then
   
   echo "EXTRACTING HADOOP ARCHIVE"
   sudo tar -zxf $BASE_DIR/software/hadoop/hadoop-$ver.tar.gz -C /usr/local
-  
-  echo "COPYING HADOOP CONFIGURATION FILES FROM SHARE TO HADOOP CONF DIR"
-  sudo cp -v $BASE_DIR/software/hadoop/share/conf/* /usr/local/hadoop-$ver/etc/hadoop
     
   echo "HADOOP $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

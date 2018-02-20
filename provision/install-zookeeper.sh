@@ -40,9 +40,6 @@ if [ ! -d /usr/local/zookeeper-$ver ]; then
 	
   echo "EXTRACTING ZOOKEEPER ARCHIVE"
   sudo tar -zxf $BASE_DIR/software/zookeeper/zookeeper-$ver.tar.gz -C /usr/local
-  
-  echo "COPYING ZOOKEEPER CONFIGURATION FILES FROM SHARE TO ZOOKEEPER CONF DIR"
-  sudo cp -v $BASE_DIR/software/zookeeper/share/conf/* /usr/local/zookeeper-$ver/conf
     
   echo "ZOOKEEPER $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED" 
 else

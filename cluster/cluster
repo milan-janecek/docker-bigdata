@@ -18,6 +18,19 @@ function manage_component() {
   fi
 }
 
+# function to configure local installation of components to point to the cluster
+function configure_local_installation() {
+  # $1 is cluster configuration - one of simple|ha
+  echo "Copying configuration of $1 cluster to local installation"
+  sudo cp -v $scripts/../../software/hadoop/share/conf-$1/* $HADOOP_HOME/etc/hadoop
+  sudo cp -v $HADOOP_HOME/etc/hadoop/core-site.xml $HBASE_HOME/conf
+  sudo cp -v $HADOOP_HOME/etc/hadoop/hdfs-site.xml $HBASE_HOME/conf
+  sudo cp -v $scripts/../../software/hbase/share/conf-$1/* $HBASE_HOME/conf
+  sudo sed -i "s#<value>/data</value>#<value>/tmp</value>#" \
+    $HBASE_HOME/conf/hbase-site.xml
+  sudo cp -v $scripts/../../software/zookeeper/share/conf-$1/* $ZOOKEEPER_HOME/conf
+}
+
 # checks for presence of cluster network and creates it if it does not exist
 network=$(docker network ls | grep cluster)
 if [ -z "$network" ]; then
@@ -64,6 +77,8 @@ case "$command" in
   create)
     case "$1" in
       ""|simple)
+        configure_local_installation simple
+      
         $scripts/zookeeper create 1 simple
         
         $scripts/namenode create 1 simple
@@ -92,6 +107,8 @@ case "$command" in
         $scripts/sparkhistoryserver create simple
         ;;
       ha)
+        configure_local_installation ha
+        
         $scripts/zookeeper create 1 ha
         $scripts/zookeeper create 2 ha
         $scripts/zookeeper create 3 ha
@@ -184,6 +201,7 @@ case "$command" in
     manage_component zkfc delete
     manage_component namenode delete
     manage_component zookeeper delete
+    docker network rm cluster
   ;;
   
   *)
