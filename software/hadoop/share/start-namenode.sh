@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "COPYING CONFIGURATION FILES FROM SHARE TO HADOOP CONF DIR"
-cp -v /share/conf/* $HADOOP_HOME/etc/hadoop
+cp -v /share/conf-$CLUSTER_CONFIG/* $HADOOP_HOME/etc/hadoop
 
 if [ ! -f /edits/.already_formatted ]; then
   

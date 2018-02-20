@@ -1,69 +1,69 @@
 #!/bin/bash
 
 component=$(basename $0)
+base_dir=$(dirname $0)/../..
+source $base_dir/cluster/scripts/functions.sh
 
-function print_usage() {
-  echo
-  echo "Usage: $component COMMAND"
-  echo 
-  echo "Available commands:"
-  echo 
-  echo "  create"
-  echo "  start"
-  echo "  stop"
-  echo "  delete"
-}
-
-if [ $# -ne 1 ]; then
-  print_usage
+if [ $# -lt 1 ]; then
+  print_component_usage $component false
   exit 1
 fi
 
-base_dir=$(dirname $0)/../..
 command=$1
 name=${component}
 
 case "$command" in
   create)
-    echo "Creating $name"
+    case "$2" in
+      simple|ha|"")
+        cluster_config=${2:-simple}
+        
+        echo "Creating $name"
 
-    # EXPOSED PORTS
-    #
-    # 18080 - sparkhistoryserver http ui => spark.history.ui.port
-   
-    base_dir=$(dirname $0)/../..
+        # EXPOSED PORTS
+        #
+        # 18080 - sparkhistoryserver http ui => spark.history.ui.port
+       
+        base_dir=$(dirname $0)/../..
 
-    docker run -dit \
-      --name $name \
-      --hostname $name.cluster \
-      --network=cluster \
-      --expose 18080 -p 18080:18080 \
-      --mount type=bind,source=$base_dir/software/spark/share,target=/share \
-      --mount type=bind,source=$base_dir/software/hadoop/share,target=/hadoop-share \
-      -m 256M --memory-swap 256M \
-      -e "SPARK_DAEMON_MEMORY=205m" \
-      spark:${SPARK_VER}_${HADOOP_VER} /share/start-sparkhistoryserver.sh
+        docker run -dit \
+          --name $name \
+          --hostname $name.cluster \
+          --network=cluster \
+          --expose 18080 -p 18080:18080 \
+          --mount type=bind,source=$base_dir/software/spark/share,target=/share \
+          --mount type=bind,source=$base_dir/software/hadoop/share,target=/hadoop-share \
+          -m 256M --memory-swap 256M \
+          -e "SPARK_DAEMON_MEMORY=205m" \
+          -e "CLUSTER_CONFIG=$cluster_config" \
+          spark:${SPARK_VER}_${HADOOP_VER} /share/start-sparkhistoryserver.sh
 
-    ip=$(docker inspect \
-      --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-      $name)
-      
-     sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
-  ;;
+        ip=$(docker inspect \
+          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+          $name)
+          
+         sudo sh -c "echo $ip $name.cluster >> /etc/hosts"            
+        ;;
+      *)
+        print_component_usage $component false
+        exit 1
+        ;;
+    esac
+    ;;
   start)
     echo "Starting $name"
     docker container start $name
-  ;;
+    ;;
   stop)
     echo "Stopping $name"
     docker container kill $name
-  ;;
+    ;;
   delete)
     echo "Deleting $name"
     docker container rm $name
     sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
-  ;;
+    ;;
   *)
-    print_usage
+    print_component_usage $component false
     exit 1
 esac

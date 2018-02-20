@@ -1,70 +1,70 @@
 #!/bin/bash
 
 component=$(basename $0)
+base_dir=$(dirname $0)/../..
+source $base_dir/cluster/scripts/functions.sh
 
-function print_usage() {
-  echo
-  echo "Usage: $component COMMAND NUMBER"
-  echo 
-  echo "Available commands:"
-  echo 
-  echo "  create"
-  echo "  start"
-  echo "  stop"
-  echo "  delete"
-}
-
-if [ $# -ne 2 ]; then
-  print_usage
+if [ $# -lt 2 ]; then
+  print_component_usage $component
   exit 1
 fi
 
-base_dir=$(dirname $0)/../..
 command=$1
 number=$2
 name=${component}${number}
 
 case "$command" in
   create)
-    echo "Creating $name"
+    case "$3" in
+      simple|ha|"")
+        cluster_config=${3:-simple}
+        
+        echo "Creating $name"
 
-    prefix=$number
-    let "prefix -= 1"
+        prefix=$number
+        let "prefix -= 1"
 
-    if [ "$prefix" -eq "0" ]; then
-      prefix=""
-    fi
-   
-    docker run -dit \
-      --name $name \
-      --network=container:datanode${number} \
-      --mount source=$name-data,target=/data \
-      --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
-      -m 2048M --memory-swap 2048M \
-      -e "YARN_NODEMANAGER_HEAPSIZE=410" \
-      hadoop:$HADOOP_VER /share/start-nodemanager.sh
+        if [ "$prefix" -eq "0" ]; then
+          prefix=""
+        fi
+       
+        docker run -dit \
+          --name $name \
+          --network=container:datanode${number} \
+          --mount source=$name-data,target=/data \
+          --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+          -m 2048M --memory-swap 2048M \
+          -e "YARN_NODEMANAGER_HEAPSIZE=410" \
+          -e "CLUSTER_CONFIG=$cluster_config" \
+          hadoop:$HADOOP_VER /share/start-nodemanager.sh
 
-    ip=$(docker inspect \
-      --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-      datanode$number)
+        ip=$(docker inspect \
+          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+          datanode$number)
 
-    sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
-  ;;
+        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
+        ;;
+      *)
+        print_component_usage $component
+        exit 1
+        ;;
+    esac
+    ;;
   start)
     echo "Starting $name"
     docker container start $name
-  ;;
+    ;;
   stop)
     echo "Stopping $name"
     docker container kill $name
-  ;;
+    ;;
   delete)
     echo "Deleting $name"
     docker container rm $name
     sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
     docker volume rm $name-data
-  ;;
+    ;;
   *)
-    print_usage
+    print_component_usage $component
     exit 1
 esac

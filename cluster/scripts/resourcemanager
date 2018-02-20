@@ -1,86 +1,86 @@
 #!/bin/bash
 
 component=$(basename $0)
+base_dir=$(dirname $0)/../..
+source $base_dir/cluster/scripts/functions.sh
 
-function print_usage() {
-  echo
-  echo "Usage: $component COMMAND NUMBER"
-  echo 
-  echo "Available commands:"
-  echo 
-  echo "  create"
-  echo "  start"
-  echo "  stop"
-  echo "  delete"
-}
-
-if [ $# -ne 2 ]; then
-  print_usage
+if [ $# -lt 2 ]; then
+  print_component_usage $component
   exit 1
 fi
 
-base_dir=$(dirname $0)/../..
 command=$1
 number=$2
 name=${component}${number}
 
 case "$command" in
   create)
-    echo "Creating $name"
+    case "$3" in
+      simple|ha|"")
+        cluster_config=${3:-simple}
+        
+        echo "Creating $name"
 
-    prefix=$number
-    let "prefix -= 1"
+        prefix=$number
+        let "prefix -= 1"
 
-    if [ "$prefix" -eq "0" ]; then
-      prefix=""
-    fi
+        if [ "$prefix" -eq "0" ]; then
+          prefix=""
+        fi
 
-    # EXPOSED PORTS
-    #
-    # 8088 - resourcemanager http ui => yarn.resourcemanager.webapp.address
-    # 8030 - address of the scheduler => yarn.resourcemanager.scheduler.address
-    # 8031 - address of the resource tracker => yarn.resourcemanager.resource-tracker.address
-    # 8032 - address of the applications manager interface => yarn.resourcemanager.address
-    # 8033 - address of the admin interface => yarn.resourcemanager.admin.address
-    #
-    # 1st node gets default ports, 2nd node gets ports prefixed by 1 and so on
+        # EXPOSED PORTS
+        #
+        # 8088 - resourcemanager http ui => yarn.resourcemanager.webapp.address
+        # 8030 - address of the scheduler => yarn.resourcemanager.scheduler.address
+        # 8031 - address of the resource tracker => yarn.resourcemanager.resource-tracker.address
+        # 8032 - address of the applications manager interface => yarn.resourcemanager.address
+        # 8033 - address of the admin interface => yarn.resourcemanager.admin.address
+        #
+        # 1st node gets default ports, 2nd node gets ports prefixed by 1 and so on
 
-    docker run -dit \
-      --name $name \
-      --hostname $name.cluster \
-      --network=cluster \
-      --expose ${prefix}8088 -p ${prefix}8088:${prefix}8088 \
-      --expose ${prefix}8030 -p ${prefix}8030:${prefix}8030 \
-      --expose ${prefix}8031 -p ${prefix}8031:${prefix}8031 \
-      --expose ${prefix}8032 -p ${prefix}8032:${prefix}8032 \
-      --expose ${prefix}8033 -p ${prefix}8033:${prefix}8033 \
-      --mount source=$name-data,target=/data \
-      --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
-      -m 512M --memory-swap 512M \
-      -e "YARN_RESOURCEMANAGER_HEAPSIZE=410" \
-      hadoop:$HADOOP_VER /share/start-resourcemanager.sh
+        docker run -dit \
+          --name $name \
+          --hostname $name.cluster \
+          --network=cluster \
+          --expose ${prefix}8088 -p ${prefix}8088:${prefix}8088 \
+          --expose ${prefix}8030 -p ${prefix}8030:${prefix}8030 \
+          --expose ${prefix}8031 -p ${prefix}8031:${prefix}8031 \
+          --expose ${prefix}8032 -p ${prefix}8032:${prefix}8032 \
+          --expose ${prefix}8033 -p ${prefix}8033:${prefix}8033 \
+          --mount source=$name-data,target=/data \
+          --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
+          -m 512M --memory-swap 512M \
+          -e "YARN_RESOURCEMANAGER_HEAPSIZE=410" \
+          -e "CLUSTER_CONFIG=$cluster_config" \
+          hadoop:$HADOOP_VER /share/start-resourcemanager.sh
 
-    ip=$(docker inspect \
-      --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-      $name)
+        ip=$(docker inspect \
+          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+          $name)
 
-    sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
-  ;;
+        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
+        ;;
+      *)
+        print_component_usage $component
+        exit 1
+        ;;
+    esac
+    ;;
   start)
     echo "Starting $name"
     docker container start $name
-  ;;
+    ;;
   stop)
     echo "Stopping $name"
     docker container kill $name
-  ;;
+    ;;
   delete)
     echo "Deleting $name"
     docker container rm $name
     sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
     docker volume rm $name-data
-  ;;
+    ;;
   *)
-    print_usage
+    print_component_usage $component
     exit 1
 esac

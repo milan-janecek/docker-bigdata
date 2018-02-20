@@ -5,6 +5,20 @@ source $scripts/functions.sh
 command=$1
 shift
 
+# function to start|stop|delete all instances of specific component
+function manage_component() {
+  # $1 is component name
+  # $2 is action - one of start|stop|delete
+  instances=$(docker container ls -a --filter "name=$1" --format "{{ .Names }}")
+  if [ "$instances" != "" ]; then
+    echo "$instances" | while read instance; do
+       number=$(echo $instance | tr -dc '0-9')
+       $scripts/$1 $2 $number
+    done
+  fi
+}
+
+# checks for presence of cluster network and creates it if it does not exist
 network=$(docker network ls | grep cluster)
 if [ -z "$network" ]; then
   docker network create cluster
@@ -14,196 +28,162 @@ if [ -z "$network" ]; then
 fi
 
 case "$command" in
-  
   zookeeper)
     $scripts/zookeeper $@
-  ;;
-  
+    ;;
   namenode)
     $scripts/namenode $@
-  ;;
-  
+    ;;
   zkfc)
     $scripts/zkfc $@
-  ;;
-  
+    ;;
   datanode)
     $scripts/datanode $@
-  ;;
-  
+    ;;
   resourcemanager)
     $scripts/resourcemanager $@
-  ;;
-  
+    ;;
   nodemanager)
     $scripts/nodemanager $@
-  ;;
-  
+    ;;
   timelineserver)
     $scripts/timelineserver $@
-  ;;
-  
+    ;;
   mapredhistoryserver)
     $scripts/mapredhistoryserver $@
-  ;;
-  
+    ;;
   hmaster)
     $scripts/hmaster $@
-  ;;
-  
+    ;;
   hregionserver)
     $scripts/hregionserver $@
-  ;;
-  
+    ;;
   sparkhistoryserver)
     $scripts/sparkhistoryserver $@
-  ;;
-
+    ;;
   create)
-    $scripts/zookeeper create 1
-    $scripts/zookeeper create 2
-    $scripts/zookeeper create 3
-    
-    $scripts/namenode create 1
-    $scripts/namenode create 2
-    $scripts/zkfc create 1
-    $scripts/zkfc create 2
-    
-    $scripts/datanode create 1
-    $scripts/datanode create 2
-    $scripts/datanode create 3
-    
-    echo "Creating /tmp/logs on HDFS to store aggregated logs"
-    hadoop fs -mkdir -p /tmp/logs
-    
-    $scripts/resourcemanager create 1
-    $scripts/resourcemanager create 2
-    
-    $scripts/nodemanager create 1
-    $scripts/nodemanager create 2
-    $scripts/nodemanager create 3
-    
-    $scripts/timelineserver create
-    
-    $scripts/mapredhistoryserver create
-    
-    $scripts/hmaster create 1
-    $scripts/hmaster create 2
-    
-    $scripts/hregionserver create 1
-    $scripts/hregionserver create 2
-    $scripts/hregionserver create 3
-    
-    echo "Creating /spark/event-log and adding spark jars to HDFS"
-    hadoop fs -mkdir -p /spark/event-log
-    hadoop fs -copyFromLocal $SPARK_HOME/jars /spark
-    
-    $scripts/sparkhistoryserver create
-  ;;
-  
+    case "$1" in
+      ""|simple)
+        $scripts/zookeeper create 1 simple
+        
+        $scripts/namenode create 1 simple
+                       
+        $scripts/datanode create 1 simple
+        
+        echo "Creating /tmp/logs on HDFS to store aggregated logs"
+        hadoop fs -mkdir -p /tmp/logs
+        
+        $scripts/resourcemanager create 1 simple
+        
+        $scripts/nodemanager create 1 simple
+        
+        $scripts/timelineserver create simple
+        
+        $scripts/mapredhistoryserver create simple
+        
+        $scripts/hmaster create 1 simple
+        
+        $scripts/hregionserver create 1 simple
+        
+        echo "Creating /spark/event-log and adding spark jars to HDFS"
+        hadoop fs -mkdir -p /spark/event-log
+        hadoop fs -copyFromLocal $SPARK_HOME/jars /spark
+        
+        $scripts/sparkhistoryserver create simple
+        ;;
+      ha)
+        $scripts/zookeeper create 1 ha
+        $scripts/zookeeper create 2 ha
+        $scripts/zookeeper create 3 ha
+        
+        $scripts/namenode create 1 ha
+        $scripts/namenode create 2 ha
+        
+        $scripts/zkfc create 1 ha
+        $scripts/zkfc create 2 ha
+        
+        $scripts/datanode create 1 ha
+        $scripts/datanode create 2 ha
+        
+        echo "Creating /tmp/logs on HDFS to store aggregated logs"
+        hadoop fs -mkdir -p /tmp/logs
+        
+        $scripts/resourcemanager create 1 ha
+        $scripts/resourcemanager create 2 ha
+        
+        $scripts/nodemanager create 1 ha
+        $scripts/nodemanager create 2 ha
+        
+        $scripts/timelineserver create ha
+        
+        $scripts/mapredhistoryserver create ha
+        
+        $scripts/hmaster create 1 ha
+        $scripts/hmaster create 2 ha
+        
+        $scripts/hregionserver create 1 ha
+        $scripts/hregionserver create 2 ha
+        
+        echo "Creating /spark/event-log and adding spark jars to HDFS"
+        hadoop fs -mkdir -p /spark/event-log
+        hadoop fs -copyFromLocal $SPARK_HOME/jars /spark
+        
+        $scripts/sparkhistoryserver create ha
+        ;;
+      *)
+        echo
+        echo "Usage: create [CLUSTER CONFIGURATION]"
+        echo
+        echo "Available cluster configurations:"
+        echo
+        echo "  simple"
+        echo "  ha"
+        echo
+        echo "Default cluster configuration is simple."
+        exit 1
+        ;;
+    esac
+    ;;
   start)
-    $scripts/zookeeper start 1
-    $scripts/zookeeper start 2
-    $scripts/zookeeper start 3
-    
-    $scripts/namenode start 1
-    $scripts/namenode start 2
-    $scripts/zkfc start 1
-    $scripts/zkfc start 2
-    
-    $scripts/datanode start 1
-    $scripts/datanode start 2
-    $scripts/datanode start 3
-    
-    $scripts/resourcemanager start 1
-    $scripts/resourcemanager start 2
-    
-    $scripts/nodemanager start 1
-    $scripts/nodemanager start 2
-    $scripts/nodemanager start 3
-    
-    $scripts/timelineserver start
-    
-    $scripts/mapredhistoryserver start
-    
-    $scripts/hmaster start 1
-    $scripts/hmaster start 2
-    
-    $scripts/hregionserver start 1
-    $scripts/hregionserver start 2
-    $scripts/hregionserver start 3
-    
-    $scripts/sparkhistoryserver start
+    manage_component zookeeper start
+    manage_component namenode start
+    manage_component zkfc start
+    manage_component datanode start
+    manage_component resourcemanager start
+    manage_component nodemanager start
+    manage_component timelineserver start
+    manage_component mapredhistoryserver start
+    manage_component hmaster start
+    manage_component hregionserver start
+    manage_component sparkhistoryserver start
   ;;
   
   stop)
-    $scripts/sparkhistoryserver stop
-   
-    $scripts/hregionserver stop 3
-    $scripts/hregionserver stop 2
-    $scripts/hregionserver stop 1
-  
-    $scripts/hmaster stop 2
-    $scripts/hmaster stop 1
-  
-    $scripts/mapredhistoryserver stop
-  
-    $scripts/timelineserver stop
-  
-    $scripts/nodemanager stop 3
-    $scripts/nodemanager stop 2
-    $scripts/nodemanager stop 1
-    
-    $scripts/resourcemanager stop 2
-    $scripts/resourcemanager stop 1
-  
-    $scripts/datanode stop 3
-    $scripts/datanode stop 2
-    $scripts/datanode stop 1
-    
-    $scripts/zkfc stop 2
-    $scripts/zkfc stop 1
-    $scripts/namenode stop 2
-    $scripts/namenode stop 1
-    
-    $scripts/zookeeper stop 3
-    $scripts/zookeeper stop 2
-    $scripts/zookeeper stop 1
+    manage_component sparkhistoryserver stop
+    manage_component hregionserver stop
+    manage_component hmaster stop
+    manage_component mapredhistoryserver stop
+    manage_component timelineserver stop
+    manage_component nodemanager stop
+    manage_component resourcemanager stop
+    manage_component datanode stop
+    manage_component zkfc stop
+    manage_component namenode stop
+    manage_component zookeeper stop
   ;;
 
   delete)
-    $scripts/sparkhistoryserver delete
-  
-    $scripts/hregionserver delete 3
-    $scripts/hregionserver delete 2
-    $scripts/hregionserver delete 1
-  
-    $scripts/hmaster delete 2
-    $scripts/hmaster delete 1
-    
-    $scripts/mapredhistoryserver delete
-  
-    $scripts/timelineserver delete
-   
-    $scripts/nodemanager delete 3
-    $scripts/nodemanager delete 2
-    $scripts/nodemanager delete 1
-   
-    $scripts/resourcemanager delete 2
-    $scripts/resourcemanager delete 1
-  
-    $scripts/datanode delete 3
-    $scripts/datanode delete 2
-    $scripts/datanode delete 1
-  
-    $scripts/zkfc delete 2
-    $scripts/zkfc delete 1
-    $scripts/namenode delete 2
-    $scripts/namenode delete 1
-    
-    $scripts/zookeeper delete 3
-    $scripts/zookeeper delete 2
-    $scripts/zookeeper delete 1
+    manage_component sparkhistoryserver delete
+    manage_component hregionserver delete
+    manage_component hmaster delete
+    manage_component mapredhistoryserver delete
+    manage_component timelineserver delete
+    manage_component nodemanager delete
+    manage_component resourcemanager delete
+    manage_component datanode delete
+    manage_component zkfc delete
+    manage_component namenode delete
+    manage_component zookeeper delete
   ;;
   
   *)
@@ -222,11 +202,12 @@ case "$command" in
   echo "  hmaster"
   echo "  hregionserver"
   echo 
-  echo "Available commands, manipulate the entire cluster:"
+  echo "Available commands, manipulate the entire cluster, create accepts options:"
   echo "  create"
   echo "  start"
   echo "  stop"
   echo "  delete"
+  echo
   exit 1
   
 esac

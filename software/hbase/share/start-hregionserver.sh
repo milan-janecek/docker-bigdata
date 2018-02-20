@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "COPYING CONFIGURATION FILES FROM dockeSHARE TO CONF DIR"
-cp -v /share/conf/* $HBASE_HOME/conf
-cp -v /hadoop-share/conf/core-site.xml $HBASE_HOME/conf
-cp -v /hadoop-share/conf/hdfs-site.xml $HBASE_HOME/conf
+echo "COPYING CONFIGURATION FILES FROM SHARE TO CONF DIR"
+cp -v /share/conf-$CLUSTER_CONFIG/* $HBASE_HOME/conf
+cp -v /hadoop-share/conf-$CLUSTER_CONFIG/core-site.xml $HBASE_HOME/conf
+cp -v /hadoop-share/conf-$CLUSTER_CONFIG/hdfs-site.xml $HBASE_HOME/conf
 
 export HBASE_ZNODE_FILE=/data/znodefile
 

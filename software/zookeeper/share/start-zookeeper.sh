@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "COPYING CONFIGURATION FILES FROM SHARE TO ZOOKEEPER CONF DIR"
-cp -v /share/conf/* $ZOOKEEPER_HOME/conf
+cp -v /share/conf-$CLUSTER_CONFIG/* $ZOOKEEPER_HOME/conf
 
 number=$(hostname | tr -dc '0-9')
 
