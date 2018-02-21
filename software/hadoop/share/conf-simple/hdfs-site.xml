@@ -39,6 +39,10 @@
     <value>1</value>
   </property>
   <property>
+    <name>dfs.datanode.max.transfer.threads</name>
+    <value>10240</value>
+  </property>
+  <property>
     <name>dfs.datanode.data.dir</name>
     <value>file:///data/dfs/data</value>
   </property>

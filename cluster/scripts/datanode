@@ -76,6 +76,7 @@ case "$command" in
           -m 512M --memory-swap 512M \
           -e "HADOOP_DATANODE_OPTS=-Xmx410m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
+          --ulimit nofile=10000:10000 \
           hadoop:$HADOOP_VER /share/start-datanode.sh
 
         ip=$(docker inspect \

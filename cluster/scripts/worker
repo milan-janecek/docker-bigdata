@@ -1,0 +1,47 @@
+#!/bin/bash
+
+base_dir=$(dirname $0)/../..
+source $base_dir/cluster/scripts/functions.sh
+
+if [ $# -lt 2 ]; then
+  print_component_usage worker
+  exit 1
+fi
+
+command=$1
+number=$2
+
+case "$command" in
+  create)
+    case "$3" in
+      simple|ha|"")
+        cluster_config=${3:-simple}
+        cluster datanode create $number $cluster_config
+        cluster nodemanager create $number $cluster_config
+        cluster hregionserver create $number $cluster_config
+        ;;
+      *)
+        print_component_usage worker
+        exit 1
+        ;;
+    esac
+    ;;
+  start)
+    cluster datanode start $number
+    cluster nodemanager start $number
+    cluster hregionserver start $number
+    ;;
+  stop)
+    cluster hregionserver stop $number
+    cluster nodemanager stop $number
+    cluster datanode stop $number
+    ;;
+  delete)
+    cluster hregionserver delete $number
+    cluster nodemanager delete $number
+    cluster datanode delete $number
+    ;;
+  *)
+    print_component_usage worker
+    exit 1
+esac

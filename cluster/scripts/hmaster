@@ -48,6 +48,7 @@ case "$command" in
           -m 512M --memory-swap 512M \
           -e "HBASE_MASTER_OPTS=-Xmx410m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
+          --ulimit nofile=10000:10000 \
           hbase:${HBASE_VER}_${HADOOP_VER} /share/start-hmaster.sh
 
         ip=$(docker inspect \

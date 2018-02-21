@@ -30,6 +30,7 @@ case "$command" in
           -m 1024M --memory-swap 1024M \
           -e "HBASE_REGIONSERVER_OPTS=-Xmx820m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
+          --ulimit nofile=10000:10000 \
           hbase:${HBASE_VER}_${HADOOP_VER} /share/start-hregionserver.sh
 
         ip=$(docker inspect \

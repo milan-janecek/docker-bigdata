@@ -55,6 +55,9 @@ if [ ! -d /usr/local/spark-$ver ]; then
   addLineToFile "spark.yarn.jars hdfs:///spark/jars/*" $sparkDefaultsFile
   addLineToFile "spark.eventLog.enabled true" $sparkDefaultsFile
   addLineToFile "spark.eventLog.dir hdfs:///spark/event-log" $sparkDefaultsFile
+  addLineToFile "spark.yarn.am.memory 512m" $sparkDefaultsFile
+  addLineToFile "spark.driver.memory 512m" $sparkDefaultsFile
+  addLineToFile "spark.executor.memory 512m" $sparkDefaultsFile
    
   echo "SPARK $ver HAS BEEN SUCCESSFULLY INSTALLED AND CONFIGURED"
 else

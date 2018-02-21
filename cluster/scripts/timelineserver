@@ -33,8 +33,8 @@ case "$command" in
           --expose 8188 -p 8188:8188 \
           --mount source=$name-data,target=/data \
           --mount type=bind,source=$base_dir/software/hadoop/share,target=/share \
-          -m 256M --memory-swap 256M \
-          -e "YARN_TIMELINESERVER_HEAPSIZE=205" \
+          -m 512M --memory-swap 512M \
+          -e "YARN_TIMELINESERVER_HEAPSIZE=410" \
           -e "CLUSTER_CONFIG=$cluster_config" \
           hadoop:$HADOOP_VER /share/start-timelineserver.sh
 
