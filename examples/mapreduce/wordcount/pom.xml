@@ -2,18 +2,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>milan.janecek.wordcount</groupId>
+  <groupId>com.example.mapreduce</groupId>
   <artifactId>wordcount</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 
   <name>wordcount</name>
-  <url>http://maven.apache.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
-
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.hadoop</groupId>
