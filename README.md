@@ -1,2 +1,2 @@
-# docker-bigdata
-Docker environment to play with big data technologies
+# local-cluster
+Cluster of big data containers to play with.
