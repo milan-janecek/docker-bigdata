@@ -38,13 +38,9 @@ case "$command" in
           -m 512M --memory-swap 512M \
           -e "HADOOP_JOB_HISTORYSERVER_HEAPSIZE=410" \
           -e "CLUSTER_CONFIG=$cluster_config" \
-          hadoop:$HADOOP_VER /share/start-mapredhistoryserver.sh
+          hadoop:$HADOOP_VER bash /share/start-mapredhistoryserver.sh
 
-        ip=$(docker inspect \
-          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-          $name)
-          
-         sudo sh -c "echo $ip $name.cluster >> /etc/hosts"        
+        addContainerToHostsFile $name
         ;;
       *)
         print_component_usage $component false
@@ -63,7 +59,7 @@ case "$command" in
   delete)
     echo "Deleting $name"
     docker container rm $name
-    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    removeLineContaining $name.cluster /etc/hosts
     docker volume rm $name-data
     ;;
   *)

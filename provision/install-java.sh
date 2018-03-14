@@ -1,18 +1,15 @@
-if [ $# -ne 2vagran ]; then
-  echo "ERROR: Exactly 2 arguments are needed: oracle_jdk_url, sha256_checksum."
-  exit 1
-fi
+#!/bin/bash
 
 BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
+source $BASE_DIR/cluster/scripts/functions.sh
 
-oracle_jdk_url=$1
-sha256_checksum=$2
+if [ -f $BASE_DIR/provision/configs/config.sh ]; then
+  source $BASE_DIR/provision/configs/config.sh
+else
+  source $BASE_DIR/provision/configs/default-config.sh
+fi
 
-echo "*** SCRIPT ARGUMENTS ***"
-echo "oracle_jdk_url: $1"
-echo "sha256_checksum: $2"
-
-filename=$(basename $oracle_jdk_url)
+filename=$(basename $ORACLE_JDK_URL)
 ver=$(echo $filename | sed -r 's/(\w+)-([0-9a-ZA-Z]+)-(.+)/\1-\2/')
 
 echo "*** INSTALLING JAVA $ver ***"
@@ -22,10 +19,10 @@ if [ ! -d /usr/local/$ver ]; then
   if [ ! -f $BASE_DIR/software/java/$filename ]; then
     echo "DOWNLOADING JAVA" 
     curl -jkSLH "Cookie: oraclelicense=accept-securebackup-cookie" \
-      -o $BASE_DIR/software/java/$filename $oracle_jdk_url
+      -o $BASE_DIR/software/java/$filename $ORACLE_JDK_URL
   
     echo "VALIDATING CHECKSUM"
-    echo "$sha256_checksum $BASE_DIR/software/java/$filename" | sha256sum -c -
+    echo "$ORACLE_JDK_SHA256_CHECKSUM $BASE_DIR/software/java/$filename" | sha256sum -c -
     exit_status=$?
     if [ $exit_status -ne 0 ]; then
       rm -rf $BASE_DIR/software/java/$filename
@@ -47,10 +44,5 @@ else
 fi
 
 echo "*** CONFIGURING ENVIRONMENT TO USE JAVA $ver ***"
-echo "SETTING JAVA_HOME"
-sudo sh -c \
-  "echo export JAVA_HOME=/usr/local/$ver > /etc/profile.d/java-home.sh"
-  
-echo "ADDING JAVA BIN TO PATH"
-sudo sh -c \
-  'echo export PATH=\$PATH:/usr/local/'$ver'/bin > /etc/profile.d/java-bin.sh'
+addEnvVarExportToFile JAVA_HOME /usr/local/$ver /etc/profile
+addLineToFile 'export PATH=$PATH:$JAVA_HOME/bin' /etc/profile

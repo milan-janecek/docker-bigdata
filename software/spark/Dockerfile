@@ -1,4 +1,4 @@
-# version of hadoop to use - image is based on specific version of hadoop
+doc# version of hadoop to use - image is based on specific version of hadoop
 ARG HADOOP_VER
 
 FROM hadoop:$HADOOP_VER

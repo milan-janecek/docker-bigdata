@@ -26,18 +26,19 @@ function configure_local_installation() {
   sudo cp $HADOOP_HOME/etc/hadoop/core-site.xml $HBASE_HOME/conf
   sudo cp $HADOOP_HOME/etc/hadoop/hdfs-site.xml $HBASE_HOME/conf
   sudo cp $scripts/../../software/hbase/share/conf-$1/* $HBASE_HOME/conf
-  sudo sed -i "s#<value>/data</value>#<value>/tmp</value>#" \
-    $HBASE_HOME/conf/hbase-site.xml
+  new_content=$(sed "s#<value>/data</value>#<value>/tmp</value>#" $HBASE_HOME/conf/hbase-site.xml)
+  echo "$new_content" | sudo tee $HBASE_HOME/conf/hbase-site.xml &>/dev/null
   sudo cp $scripts/../../software/zookeeper/share/conf-$1/* $ZOOKEEPER_HOME/conf
 }
 
 # checks for presence of cluster network and creates it if it does not exist
 network=$(docker network ls | grep cluster)
 if [ -z "$network" ]; then
+  echo "Creating cluster network because it does not exist yet."
   docker network create cluster
   echo "Setting SPARK_LOCAL_IP to bind to ip of docker host"
   docker_host_ip=$(docker network inspect cluster --format '{{(index .IPAM.Config 0).Gateway}}')
-  addLineToFile "export SPARK_LOCAL_IP=$docker_host_ip" $SPARK_HOME/conf/spark-env.sh
+  addEnvVarExportToFile SPARK_LOCAL_IP $docker_host_ip $SPARK_HOME/conf/spark-env.sh
 fi
 
 case "$command" in

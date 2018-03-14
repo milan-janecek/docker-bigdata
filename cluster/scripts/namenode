@@ -51,13 +51,9 @@ case "$command" in
           -m 512M --memory-swap 512M \
           -e "HADOOP_NAMENODE_OPTS=-Xmx410m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
-          hadoop:$HADOOP_VER /share/start-namenode.sh
+          hadoop:$HADOOP_VER bash /share/start-namenode.sh
 
-        ip=$(docker inspect \
-          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-          $name)
-
-        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
+        addContainerToHostsFile $name
         echo "Waiting 10 seconds for $name to boot up"
         sleep 10
         ;;
@@ -82,7 +78,7 @@ case "$command" in
   delete)
     echo "Deleting $name"
     docker container rm $name
-    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    removeLineContaining $name.cluster /etc/hosts
     docker volume rm $name-data
     namenodes=$(docker ps -a | grep namenode)
     if [ -z "$namenodes" ]; then

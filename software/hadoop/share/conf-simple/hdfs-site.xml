@@ -54,4 +54,8 @@
     <name>dfs.datanode.directoryscan.throttle.limit.ms.per.sec</name>
     <value>1000</value>
   </property>
+  <property>
+    <name>dfs.client.use.datanode.hostname</name>
+    <value>true</value>
+  </property>
 </configuration>

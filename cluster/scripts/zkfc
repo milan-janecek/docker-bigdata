@@ -28,13 +28,9 @@ case "$command" in
           -m 256M --memory-swap 256M \
           -e "HADOOP_ZKFC_OPTS=-Xmx205m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
-          hadoop:$HADOOP_VER /share/start-zkfc.sh
+          hadoop:$HADOOP_VER bash /share/start-zkfc.sh
         
-        ip=$(docker inspect \
-          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-          namenode$number)
-
-        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"        
+        addContainerToHostsFile $name
         ;;
       *)
         print_component_usage $component
@@ -53,7 +49,7 @@ case "$command" in
   delete)
     echo "Deleting $name"
     docker container rm $name
-    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    removeLineContaining $name.cluster /etc/hosts
     ;;
   *)
     print_component_usage $component

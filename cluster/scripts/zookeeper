@@ -48,13 +48,9 @@ case "$command" in
           -m 256M --memory-swap 256M \
           -e "JVMFLAGS=-Xmx205m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
-          zookeeper:$ZOOKEEPER_VER /share/start-zookeeper.sh
+          zookeeper:$ZOOKEEPER_VER bash /share/start-zookeeper.sh
         
-        ip=$(docker inspect \
-          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-          $name)
-
-        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
+        addContainerToHostsFile $name
         ;;
       *)
         print_component_usage $component
@@ -73,7 +69,7 @@ case "$command" in
   delete)
     echo "Deleting $name"
     docker container rm $name
-    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    removeLineContaining $name.cluster /etc/hosts
     docker volume rm $name-data
     ;;
   *)

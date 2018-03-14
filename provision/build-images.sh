@@ -2,7 +2,14 @@
 
 BASE_DIR=${BASE_DIR:-$(dirname $0)/..}
 
+if [ -f $BASE_DIR/provision/configs/config.sh ]; then
+  source $BASE_DIR/provision/configs/config.sh
+else
+  source $BASE_DIR/provision/configs/default-config.sh
+fi
+
 docker build --build-arg VER=$HADOOP_VER \
+  --build-arg SUPER_GROUP_USER=$(whoami) \
   -t hadoop:$HADOOP_VER \
   $BASE_DIR/software/hadoop
 

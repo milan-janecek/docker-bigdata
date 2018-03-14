@@ -77,14 +77,9 @@ case "$command" in
           -e "HADOOP_DATANODE_OPTS=-Xmx410m" \
           -e "CLUSTER_CONFIG=$cluster_config" \
           --ulimit nofile=10000:10000 \
-          hadoop:$HADOOP_VER /share/start-datanode.sh
+          hadoop:$HADOOP_VER bash /share/start-datanode.sh
 
-        ip=$(docker inspect \
-          --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
-          $name)
-
-        sudo sh -c "echo $ip $name.cluster >> /etc/hosts"
-        
+        addContainerToHostsFile $name
         ;;
       *)
         print_component_usage $component
@@ -111,7 +106,7 @@ case "$command" in
   delete)
     echo "Deleting $name"
     docker container rm $name
-    sudo sh -c "sed -i \"/$name.cluster/d\" /etc/hosts"
+    removeLineContaining $name.cluster /etc/hosts
     docker volume rm $name-data
     ;;
   *)
